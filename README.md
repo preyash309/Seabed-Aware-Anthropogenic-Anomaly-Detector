@@ -1,6 +1,6 @@
 # SAAD
 
-SAAD combines the original YOLO26s detector, ConvVAE, RealNVP latent flow, three-variant TTA and a human-review evidence ranking policy. Stage 1 is complete: paths and frozen assets are configurable and validated, and inference has passed the saved golden fixtures. The API remains the original monolith. Frontend review state is not yet durable.
+SAAD combines the original YOLO26s detector, ConvVAE, RealNVP latent flow, three-variant TTA and a human-review evidence ranking policy. Stages 1 and 2 are complete: frozen external assets are validated before loading, and the modular backend preserves the saved golden inference fixtures. Frontend review state is not yet durable.
 
 ## Windows setup
 
@@ -34,7 +34,7 @@ The frontend still contains its original hardcoded local upload URL and browser-
 
 backend/config.py loads local .env without overriding process environment variables. Relative paths resolve from the repository root. SAAD_ARTIFACT_DIR supplies the external root. SAAD_YOLO_WEIGHTS, SAAD_VAE_WEIGHTS, SAAD_FLOW_WEIGHTS, SAAD_LATENT_MEAN and SAAD_LATENT_STD can override individual paths only if their bytes match the selected manifest. SAAD_MODEL_MANIFEST selects a model manifest; SAAD_CALIBRATION_FILE selects a live-policy calibration with a matching manifest hash. SAAD_DATASET_DIR is an optional read-only prepared dataset. SAAD_DEVICE is auto, cpu or an available cuda:N. SAAD_UPLOAD_DIR, SAAD_OUTPUT_DIR, SAAD_API_PUBLIC_URL and SAAD_CORS_ORIGINS configure runtime storage and API origins. VITE_API_BASE_URL is documented for the later frontend integration stage.
 
-config/model_manifest.json identifies the five runtime tensors by size and SHA-256. config/live_api_v1.json contains the exact deployed percentile and weight values. The original loaders, crop, detector, VAE, flow, TTA and evidence calculations remain intact.
+config/model_manifest.json identifies the five runtime tensors by size and SHA-256. config/live_api_v1.json contains the exact deployed percentile and weight values. The original loaders, crop, detector, VAE, flow, TTA and evidence calculations remain intact. `backend/main.py:app` remains the FastAPI entry point. `backend/routes.py` owns route wiring; `backend/saad_inference/registry.py` loads the model set once at startup; `service.py` coordinates inference; `response.py` preserves candidate sorting, summary and response fields. See [ARCHITECTURE.md](ARCHITECTURE.md) for the dependency map.
 
 ## Distinct evidence policies
 
@@ -49,8 +49,8 @@ The offline v3 configuration remains externally at E:/SIH/SIH_Results/saad_evide
 
 After configuring the external artifact root, run:
 
-    python -B -m unittest discover -s tests -p "test_stage1_*.py" -v
+    python -B -m unittest discover -s tests -p "test_stage*.py" -v
 
 The golden test checks the original API candidate response on the fixed GhostVision image and all detector/crop/VAE/flow/TTA/evidence fields on one image from each prepared test domain. Image SHA-256 is checked before inference. SAAD_GOLDEN_IMAGE_DIR can point to the same three basenames on another machine. Temporary request uploads stay in configured clean-repository storage and are removed after their hashes are verified.
 
-SOURCE_INVENTORY.md, ASSET_MANIFEST.md, MIGRATION_MAP.md and REFACTOR_PLAN.md contain the audit. STAGE1_VERIFICATION.md records test results and limitations. Stage 2 modular extraction requires separate approval.
+SOURCE_INVENTORY.md, ASSET_MANIFEST.md, MIGRATION_MAP.md and REFACTOR_PLAN.md contain the audit. STAGE1_VERIFICATION.md and STAGE2_VERIFICATION.md record test results and limitations. Stage 3 API integration and persistence require separate approval.

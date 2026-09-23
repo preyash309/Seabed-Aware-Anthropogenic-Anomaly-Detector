@@ -42,3 +42,13 @@ main.py -> routes.py -> service.py -> detector.py
 | 5 | `main.py` model initialization, `analyze`, response assembly and routes | `saad_inference/registry.py`, `service.py`, `response.py`, `backend/routes.py`; `main.py` compatibility exports | One model load, original API error/fallback behavior and response keys, golden suite and route tests. |
 
 Each extraction uses the Stage 1 manifest and calibration unchanged. Research scripts, the React app and persistence are outside Stage 2. No numerical tolerance will be widened to make a move pass.
+
+## Implemented Stage 2 backend
+
+The plan above is now implemented. `backend/main.py:app` still serves the original routes through `backend/routes.py`; imports used by the Stage 1 fixture remain available from `main`. Route startup creates one `Settings` and one `ModelRegistry`. `load_models` validates sizes and SHA-256 values before loading the frozen YOLO, ConvVAE and RealNVP checkpoint set. The route hands this registry to `service.analyze` for each upload. No model is loaded per request.
+
+`service.py` retains the original upload validation, image opening, detector call, candidate loop, anomaly-score fallback and TTA/evidence sequence. `response.py` owns the original priority sort, candidate renumbering, summary and response dictionary. `preprocessing.py` retains context crop, grayscale and interpolation; `detector.py` retains YOLO arguments and coordinate clamping. `vae.py`, `realnvp.py` and `tta.py` contain the exact runtime definitions. The old `vae_inference.py`, `realnvp_inference.py` and `tta_inference.py` paths remain compatibility import shims.
+
+`evidence/live_api_v1.py` is the only evidence policy imported by the service. It implements `saad-live-api-v1`, with TTA and the original priority/uncertainty/profile rules. The offline Evidence Engine v3 is still at the read-only original research location and has distinct bonus, penalty, uncertainty and action rules. It is not exposed as a production option. The common P5/P95 values and weights do not imply policy equivalence.
+
+The response is an untyped dictionary in Stage 2 to preserve its exact keys and null/fallback behavior. Typed request/response schemas and durable scan/review state belong to Stage 3. The model registry still loads at module import to preserve the `uvicorn main:app` startup contract; this is one load per process, so multiple worker processes each load their own model set.

@@ -8,6 +8,7 @@ import unittest
 from unittest.mock import AsyncMock, patch
 
 from fastapi import HTTPException, UploadFile
+from PIL import UnidentifiedImageError
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "backend"))
 import main  # noqa: E402
@@ -61,7 +62,6 @@ class OrchestrationBoundaries(unittest.TestCase):
             (None, b"data", "No filename provided."),
             ("sample.txt", b"data", "Unsupported image format."),
             ("sample.png", b"", "Uploaded file is empty."),
-            ("sample.png", b"not an image", "Invalid image:"),
         ]
         for filename, contents, expected in cases:
             with self.subTest(filename=filename, expected=expected):
@@ -70,6 +70,13 @@ class OrchestrationBoundaries(unittest.TestCase):
                     asyncio.run(analyze(upload, routes.MODELS, routes.SETTINGS))
                 self.assertEqual(caught.exception.status_code, 400)
                 self.assertIn(expected, caught.exception.detail)
+
+        upload = UploadFile(filename="sample.png", file=io.BytesIO(b"not an image"))
+        with patch("saad_inference.service.Image.open", side_effect=UnidentifiedImageError("bad image")):
+            with self.assertRaises(HTTPException) as caught:
+                asyncio.run(analyze(upload, routes.MODELS, routes.SETTINGS))
+        self.assertEqual(caught.exception.status_code, 400)
+        self.assertIn("Invalid image: bad image", caught.exception.detail)
 
 
 if __name__ == "__main__":

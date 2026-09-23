@@ -35,6 +35,15 @@ class GoldenInference(unittest.TestCase):
     def setUpClass(cls):
         cls.api = json.loads((ROOT / "audit/baseline_capture.json").read_text())
         cls.stages = json.loads((ROOT / "audit/fixed_image_stage_capture.json").read_text())
+        cls.max_deltas = {}
+
+    @classmethod
+    def tearDownClass(cls):
+        print("STAGE2_GOLDEN_MAX_ABSOLUTE_DELTAS=" + json.dumps(cls.max_deltas, sort_keys=True))
+
+    def record_delta(self, key, actual, expected):
+        difference = abs(float(actual) - float(expected))
+        self.max_deltas[key] = max(self.max_deltas.get(key, 0.0), difference)
 
     def compare(self, actual, expected, stage=False):
         fields = (
@@ -46,13 +55,16 @@ class GoldenInference(unittest.TestCase):
         )
         for key, tolerance in fields:
             self.assertIsNotNone(actual[key])
+            self.record_delta(("stage." if stage else "api.") + key, actual[key], expected[key])
             self.assertAlmostEqual(actual[key], expected[key], delta=tolerance, msg=key)
         if stage:
             self.assertEqual(actual["class_id"], expected["class_id"])
             for a, b in zip(actual["bbox_xyxy"], expected["bbox_xyxy"]):
+                self.record_delta("stage.bbox_xyxy", a, b)
                 self.assertAlmostEqual(a, b, delta=1.0)
             actual_evidence, expected_evidence = actual["evidence"], expected["evidence"]
             for key in ("priority", "uncertainty", "baseEvidence"):
+                self.record_delta("stage.evidence." + key, actual_evidence[key], expected_evidence[key])
                 self.assertAlmostEqual(actual_evidence[key], expected_evidence[key], delta=1e-3)
             for key in ("evidenceProfile", "priorityLevel", "recommendation"):
                 self.assertEqual(actual_evidence[key], expected_evidence[key])
@@ -61,8 +73,12 @@ class GoldenInference(unittest.TestCase):
             for key in ("priorityLevel", "evidenceProfile", "recommendation"):
                 self.assertEqual(actual[key], expected[key])
             for key in ("x1", "y1", "x2", "y2"):
+                self.record_delta("api.bbox_pixels." + key, actual["bbox_pixels"][key], expected["bbox_pixels"][key])
                 self.assertAlmostEqual(actual["bbox_pixels"][key], expected["bbox_pixels"][key], delta=1)
             for key in ("yolo", "vae", "flow"):
+                self.record_delta("api.evidence.normalized." + key,
+                                  actual["evidence"]["normalized"][key],
+                                  expected["evidence"]["normalized"][key])
                 self.assertAlmostEqual(
                     actual["evidence"]["normalized"][key],
                     expected["evidence"]["normalized"][key], delta=1e-3,
