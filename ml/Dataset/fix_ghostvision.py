@@ -1,6 +1,9 @@
 from pathlib import Path
 import json
+import sys
 from PIL import Image
+
+from safety import configured_path, dry_run, require_new_output, SAFE_OUTPUT_ROOT
 
 
 # ============================================================
@@ -50,16 +53,12 @@ from PIL import Image
 # CHANGE ONLY THIS IF YOUR DATASET IS SOMEWHERE ELSE
 # ------------------------------------------------------------
 
-GHOSTVISION_ROOT = Path(
-    r"E:\SIH\Datasets\sss-crab-pot-detection-ds"
-)
+GHOSTVISION_ROOT = configured_path("SAAD_GHOSTVISION_SOURCE", Path(r"E:\SIH\Datasets\sss-crab-pot-detection-ds"))
 
 
 # Where the repaired YOLO labels will be written.
 # This DOES NOT modify your original GhostVision dataset.
-OUTPUT_ROOT = Path(
-    r"E:\SIH\Datasets\GhostVision_fixed"
-)
+OUTPUT_ROOT = configured_path("SAAD_RESEARCH_OUTPUT_DIR", SAFE_OUTPUT_ROOT / "GhostVision_fixed")
 
 
 SPLITS = ["train", "valid", "test"]
@@ -445,6 +444,11 @@ def process_split(split):
 # ============================================================
 
 if __name__ == "__main__":
+
+    if "--dry-run" in sys.argv:
+        dry_run(GHOSTVISION_ROOT, OUTPUT_ROOT)
+        sys.exit(0)
+    require_new_output(GHOSTVISION_ROOT, OUTPUT_ROOT)
 
     print()
     print("=" * 70)

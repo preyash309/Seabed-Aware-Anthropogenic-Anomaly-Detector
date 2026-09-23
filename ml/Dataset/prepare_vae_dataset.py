@@ -4,15 +4,17 @@ import numpy as np
 from PIL import Image
 import hashlib
 import random
-import shutil
+import sys
+
+from safety import configured_path, dry_run, require_new_output, SAFE_OUTPUT_ROOT
 
 
 # ============================================================
 # CONFIGURATION
 # ============================================================
 
-SAAD_ROOT = Path(r"E:\SIH\Datasets\SAAD_baseline")
-OUTPUT_ROOT = Path(r"E:\SIH\Datasets\SAAD_VAE")
+SAAD_ROOT = configured_path("SAAD_PREPARED_DATASET_DIR", Path(r"E:\SIH\Datasets\SAAD_baseline"))
+OUTPUT_ROOT = configured_path("SAAD_RESEARCH_OUTPUT_DIR", SAFE_OUTPUT_ROOT / "SAAD_VAE")
 
 MANIFEST_PATH = SAAD_ROOT / "manifest.csv"
 
@@ -176,6 +178,11 @@ def save_patch(arr, output_path):
 
 def main():
 
+    if "--dry-run" in sys.argv:
+        dry_run(SAAD_ROOT, OUTPUT_ROOT)
+        return
+    require_new_output(SAAD_ROOT, OUTPUT_ROOT)
+
     random.seed(SEED)
     np.random.seed(SEED)
 
@@ -197,12 +204,6 @@ def main():
     # --------------------------------------------------------
     # Clean/create output
     # --------------------------------------------------------
-
-    if OUTPUT_ROOT.exists():
-        print("WARNING: Output directory already exists.")
-        print("It will be removed and rebuilt.")
-
-        shutil.rmtree(OUTPUT_ROOT)
 
     train_dir = OUTPUT_ROOT / "train"
     val_dir = OUTPUT_ROOT / "val"
