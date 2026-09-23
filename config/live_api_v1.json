@@ -1,0 +1,12 @@
+{
+  "policy_id": "saad-live-api-v1",
+  "reference": "validation_normals_only",
+  "normalization": {
+    "yolo": {"p5": 0.01089343, "p95": 0.17297355},
+    "vae": {"p5": 0.00106523, "p95": 0.03465850},
+    "flow": {"p5": 49.3122, "p95": 264.3907}
+  },
+  "weights": {"yolo": 0.50, "vae": 0.20, "flow": 0.30},
+  "priority_rule": "0.80*base_evidence + 0.10*corroboration + 0.10*tta",
+  "uncertainty_rule": "0.50*disagreement + 0.30*(1-tta) + 0.20*(1-agreement)"
+}

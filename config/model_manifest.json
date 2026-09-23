@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "model_set_id": "saad-original-frozen-2026-09-23",
+  "default_policy_id": "saad-live-api-v1",
+  "research_policy_id": "saad-offline-evidence-v3",
+  "artifacts": {
+    "yolo": {
+      "relative_path": "yolo26s_generic_baseline/weights/best.pt",
+      "bytes": 20303429,
+      "sha256": "e069ee7b5180bf35e7f71f908f47160ab9e70266d611374dd77e0a34e741eb8e"
+    },
+    "vae": {
+      "relative_path": "vae_normal_seabed/checkpoints/best.pt",
+      "bytes": 218365942,
+      "sha256": "b950f60ce1358b72a9b2c58f1fd0ec955b8e7f8850205662d976356f87e043c9"
+    },
+    "flow": {
+      "relative_path": "latent_normalizing_flow/best_flow.pt",
+      "bytes": 3714807,
+      "sha256": "dbfc83c3baf1ac3a840b708b2b02b22c6a0753f1c969d7b18d623efc2e40ac65"
+    },
+    "latent_mean": {
+      "relative_path": "latent_normalizing_flow/latent_mean.pt",
+      "bytes": 2117,
+      "sha256": "56771caed4bbecc6ff019d4f63a3e16664ade7f196462c8ef223e031da8f351c"
+    },
+    "latent_std": {
+      "relative_path": "latent_normalizing_flow/latent_std.pt",
+      "bytes": 2110,
+      "sha256": "087742e906b695d06fa0a78fe7ddd31e3a02259d1569669fda0483273dbf3326"
+    }
+  },
+  "calibration": {
+    "relative_path": "live_api_v1.json",
+    "policy_id": "saad-live-api-v1",
+    "sha256": "78677e9b6270615a389735f486decbe4ab623d5ae447a96be9e82c8517c14435"
+  },
+  "provenance": {
+    "asset_ledger": "ASSET_MANIFEST.md",
+    "baseline": "BASELINE_VERIFICATION.md",
+    "original_results_root": "E:/SIH/SIH_Results"
+  }
+}

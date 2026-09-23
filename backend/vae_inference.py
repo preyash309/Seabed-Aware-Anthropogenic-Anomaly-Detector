@@ -1,6 +1,8 @@
 from pathlib import Path
 from typing import Dict, Tuple
 
+from config import Settings
+
 import numpy as np
 from PIL import Image
 
@@ -12,10 +14,6 @@ import torch.nn.functional as F
 # ============================================================
 # CONFIGURATION
 # ============================================================
-
-VAE_CHECKPOINT = Path(
-    r"E:\SIH\SIH_Results\vae_normal_seabed\checkpoints\best.pt"
-)
 
 DEVICE = (
     "cuda:0"
@@ -284,13 +282,21 @@ def _extract_state_dict(checkpoint):
     )
 
 
-def load_vae():
+def load_vae(checkpoint_path: Path | None = None, device: str | None = None):
 
-    if not VAE_CHECKPOINT.exists():
+    if checkpoint_path is None or device is None:
+        settings = Settings.from_environment()
+        checkpoint_path = checkpoint_path or settings.artifact_paths["vae"]
+        device = device or settings.device
+
+    global DEVICE
+    DEVICE = device
+
+    if not checkpoint_path.exists():
 
         raise FileNotFoundError(
             f"VAE checkpoint not found: "
-            f"{VAE_CHECKPOINT}"
+            f"{checkpoint_path}"
         )
 
     model = ConvVAE(
@@ -298,7 +304,7 @@ def load_vae():
     )
 
     checkpoint = torch.load(
-        VAE_CHECKPOINT,
+        checkpoint_path,
         map_location=DEVICE,
         weights_only=False,
     )

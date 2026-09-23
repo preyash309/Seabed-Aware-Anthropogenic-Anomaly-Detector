@@ -1,6 +1,8 @@
 from pathlib import Path
 from typing import Tuple
 
+from config import Settings
+
 import torch
 import torch.nn as nn
 
@@ -8,23 +10,6 @@ import torch.nn as nn
 # ============================================================
 # CONFIGURATION
 # ============================================================
-
-FLOW_ROOT = Path(
-    r"E:\SIH\SIH_Results\latent_normalizing_flow"
-)
-
-FLOW_CHECKPOINT = (
-    FLOW_ROOT / "best_flow.pt"
-)
-
-LATENT_MEAN_PATH = (
-    FLOW_ROOT / "latent_mean.pt"
-)
-
-LATENT_STD_PATH = (
-    FLOW_ROOT / "latent_std.pt"
-)
-
 
 DEVICE = (
     "cuda:0"
@@ -355,12 +340,29 @@ def _extract_state_dict(
 # LOAD REALNVP
 # ============================================================
 
-def load_realnvp():
+def load_realnvp(
+    flow_checkpoint: Path | None = None,
+    latent_mean_path: Path | None = None,
+    latent_std_path: Path | None = None,
+    device: str | None = None,
+):
+
+    if any(value is None for value in (
+        flow_checkpoint, latent_mean_path, latent_std_path, device
+    )):
+        settings = Settings.from_environment()
+        flow_checkpoint = flow_checkpoint or settings.artifact_paths["flow"]
+        latent_mean_path = latent_mean_path or settings.artifact_paths["latent_mean"]
+        latent_std_path = latent_std_path or settings.artifact_paths["latent_std"]
+        device = device or settings.device
+
+    global DEVICE
+    DEVICE = device
 
     for path in [
-        FLOW_CHECKPOINT,
-        LATENT_MEAN_PATH,
-        LATENT_STD_PATH,
+        flow_checkpoint,
+        latent_mean_path,
+        latent_std_path,
     ]:
 
         if not path.exists():
@@ -384,7 +386,7 @@ def load_realnvp():
 
 
     checkpoint = torch.load(
-        FLOW_CHECKPOINT,
+        flow_checkpoint,
         map_location=DEVICE,
         weights_only=False,
     )
@@ -456,13 +458,13 @@ def load_realnvp():
     # --------------------------------------------------------
 
     latent_mean = torch.load(
-        LATENT_MEAN_PATH,
+        latent_mean_path,
         map_location=DEVICE,
         weights_only=False,
     )
 
     latent_std = torch.load(
-        LATENT_STD_PATH,
+        latent_std_path,
         map_location=DEVICE,
         weights_only=False,
     )
@@ -515,7 +517,7 @@ def load_realnvp():
     )
 
     print(
-        f"  checkpoint : {FLOW_CHECKPOINT}"
+        f"  checkpoint : {flow_checkpoint}"
     )
 
     print(

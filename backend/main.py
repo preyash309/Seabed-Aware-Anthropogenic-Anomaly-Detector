@@ -19,6 +19,8 @@ from PIL import Image
 
 from ultralytics import YOLO
 
+from config import Settings
+
 from vae_inference import (
     load_vae,
     extract_candidate_patch,
@@ -38,36 +40,14 @@ from tta_inference import (
 # CONFIGURATION
 # ============================================================
 
-BACKEND_ROOT = Path(
-    r"E:\SIH\backend"
-)
+SETTINGS = Settings.from_environment()
+SETTINGS.validate_assets()
+SETTINGS.prepare_runtime_dirs()
 
-UPLOAD_DIR = (
-    BACKEND_ROOT /
-    "uploads"
-)
-
-UPLOAD_DIR.mkdir(
-    parents=True,
-    exist_ok=True,
-)
-
-
-YOLO_MODEL_PATH = Path(
-    r"E:\SIH\SIH_Results\yolo26s_generic_baseline\weights\best.pt"
-)
-
-
-DEVICE = (
-    "cuda:0"
-    if torch.cuda.is_available()
-    else "cpu"
-)
-
-
-API_BASE_URL = (
-    "http://127.0.0.1:8000"
-)
+UPLOAD_DIR = SETTINGS.upload_dir
+YOLO_MODEL_PATH = SETTINGS.artifact_paths["yolo"]
+DEVICE = SETTINGS.device
+API_BASE_URL = SETTINGS.api_public_url
 
 
 # ============================================================
@@ -89,14 +69,14 @@ API_BASE_URL = (
 #   P95 = 264.3907
 # ============================================================
 
-YOLO_P5 = 0.01089343
-YOLO_P95 = 0.17297355
+YOLO_P5 = SETTINGS.calibration["normalization"]["yolo"]["p5"]
+YOLO_P95 = SETTINGS.calibration["normalization"]["yolo"]["p95"]
 
-VAE_P5 = 0.00106523
-VAE_P95 = 0.03465850
+VAE_P5 = SETTINGS.calibration["normalization"]["vae"]["p5"]
+VAE_P95 = SETTINGS.calibration["normalization"]["vae"]["p95"]
 
-FLOW_P5 = 49.3122
-FLOW_P95 = 264.3907
+FLOW_P5 = SETTINGS.calibration["normalization"]["flow"]["p5"]
+FLOW_P95 = SETTINGS.calibration["normalization"]["flow"]["p95"]
 
 
 # ============================================================
@@ -111,9 +91,9 @@ FLOW_P95 = 264.3907
 # TTA is used primarily as a stability / uncertainty signal.
 # ============================================================
 
-YOLO_WEIGHT = 0.50
-VAE_WEIGHT = 0.20
-FLOW_WEIGHT = 0.30
+YOLO_WEIGHT = SETTINGS.calibration["weights"]["yolo"]
+VAE_WEIGHT = SETTINGS.calibration["weights"]["vae"]
+FLOW_WEIGHT = SETTINGS.calibration["weights"]["flow"]
 
 
 # ============================================================
@@ -132,10 +112,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-    ],
+    allow_origins=list(SETTINGS.cors_origins),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -210,7 +187,10 @@ print(
     "Loading VAE..."
 )
 
-vae_model = load_vae()
+vae_model = load_vae(
+    checkpoint_path=SETTINGS.artifact_paths["vae"],
+    device=DEVICE,
+)
 
 print(
     "VAE loaded."
@@ -229,7 +209,12 @@ print(
     flow_model,
     flow_latent_mean,
     flow_latent_std,
-) = load_realnvp()
+) = load_realnvp(
+    flow_checkpoint=SETTINGS.artifact_paths["flow"],
+    latent_mean_path=SETTINGS.artifact_paths["latent_mean"],
+    latent_std_path=SETTINGS.artifact_paths["latent_std"],
+    device=DEVICE,
+)
 
 print(
     "RealNVP loaded."
@@ -268,6 +253,12 @@ def health():
 
         "version":
             "0.5.0",
+
+        "modelSetId":
+            SETTINGS.manifest["model_set_id"],
+
+        "policyId":
+            SETTINGS.calibration["policy_id"],
 
         "device":
             DEVICE,
@@ -333,12 +324,7 @@ def model_info():
             "name":
                 "ConvVAE-v1",
 
-            "checkpoint": (
-                r"E:\SIH\SIH_Results"
-                r"\vae_normal_seabed"
-                r"\checkpoints"
-                r"\best.pt"
-            ),
+            "checkpoint": str(SETTINGS.artifact_paths["vae"]),
 
             "loaded":
                 True,
@@ -349,23 +335,11 @@ def model_info():
             "name":
                 "RealNVP",
 
-            "checkpoint": (
-                r"E:\SIH\SIH_Results"
-                r"\latent_normalizing_flow"
-                r"\best_flow.pt"
-            ),
+            "checkpoint": str(SETTINGS.artifact_paths["flow"]),
 
-            "latentMean": (
-                r"E:\SIH\SIH_Results"
-                r"\latent_normalizing_flow"
-                r"\latent_mean.pt"
-            ),
+            "latentMean": str(SETTINGS.artifact_paths["latent_mean"]),
 
-            "latentStd": (
-                r"E:\SIH\SIH_Results"
-                r"\latent_normalizing_flow"
-                r"\latent_std.pt"
-            ),
+            "latentStd": str(SETTINGS.artifact_paths["latent_std"]),
 
             "latentDim":
                 128,
@@ -401,7 +375,7 @@ def model_info():
                 True,
 
             "version":
-                "SAAD-EVIDENCE-v3",
+                SETTINGS.calibration["policy_id"],
 
             "weights": {
 

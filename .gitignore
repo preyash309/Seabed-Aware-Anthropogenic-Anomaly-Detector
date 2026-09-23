@@ -1,0 +1,54 @@
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Python environments and caches
+.venv/
+venv/
+new/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Frontend installs and builds
+node_modules/
+dist/
+build/
+coverage/
+
+# External models and tensors
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.onnx
+*.joblib
+*.pkl
+
+# Runtime state and generated research output
+var/
+uploads/
+outputs/
+runs/
+SIH_Results/
+*.db
+*.sqlite
+*.sqlite3
+
+# Dataset mounts and raw/generated media
+datasets/**
+!datasets/.gitignore
+data/
+*.png
+*.jpg
+*.jpeg
+*.bmp
+*.tif
+*.tiff
+*.webp
+*.pbm
