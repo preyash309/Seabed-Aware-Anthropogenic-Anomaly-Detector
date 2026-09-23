@@ -1,6 +1,8 @@
 # SAAD production recovery plan — audit and baseline complete
 
-Audit date: 2026-09-23. Status as of 2026-09-24: **Stages 1–5 implemented and verified; Stage 6 release validation in progress**. Stage reports record the executed commands, results and limits. No original data or checkpoint has been changed. The originals remain read-only.
+Audit date: 2026-09-23. Status as of 2026-09-24: **Stages 1–6 implemented and locally verified, with fresh wheel installation and external deployment unverified**. Stage reports record the executed commands, results and limits. No original data or checkpoint has been changed. The originals remain read-only.
+
+The proposed layout and future-tense steps below are retained as the original audit hypothesis. [ARCHITECTURE.md](ARCHITECTURE.md), [STAGE6_VERIFICATION.md](STAGE6_VERIFICATION.md) and [RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md) describe the implemented system and its remaining gates.
 
 ## What changed after examining the original project
 
@@ -63,4 +65,4 @@ A future root `.gitignore` must exclude `.env*` while allowing `.env.example`, m
 
 ## Current boundary
 
-Stages 1–5 were authorized and completed on `refactor/saad-production`. Stage 6 must verify release behavior and document unavailable gates. Retraining, checkpoint modification, copying datasets or results into Git, pushing, merging and external deployment remain outside the authorized work. The deployed policy remains `saad-live-api-v1`; offline v3 remains research provenance only.
+Stages 1–6 were authorized and completed on `refactor/saad-production` for local loopback use. The fresh Torch CUDA wheel installation remains unverified after interrupted downloads; see `STAGE6_VERIFICATION.md` and `RELEASE_CHECKLIST.md`. Retraining, checkpoint modification, copying datasets or results into Git, pushing, merging and external deployment remain outside the authorized work. The deployed policy remains `saad-live-api-v1`; offline v3 remains research provenance only.

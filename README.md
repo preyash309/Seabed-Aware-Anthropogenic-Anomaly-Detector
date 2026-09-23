@@ -1,24 +1,24 @@
 # SAAD
 
-SAAD combines the original YOLO26s detector, ConvVAE, RealNVP latent flow, three-variant TTA and the deployed live API evidence policy. Stages 1–5 are complete: frozen external assets are validated before loading, modular inference preserves the golden fixtures, the API stores scans and human reviews durably, the React application uses those saved records, and the original research sources are archived with hash provenance.
+SAAD combines the original YOLO26s detector, ConvVAE, RealNVP latent flow, three-variant TTA and the deployed live API evidence policy. Stages 1–6 have been validated for local loopback use: frozen external assets are checked before loading, modular inference preserves the golden fixtures, the API stores scans and human reviews durably, the React application uses those saved records, and original research sources are archived with hash provenance. A fresh Python wheel installation and external deployment remain unverified; see [RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md).
 
 ## Windows setup
 
-Use Python 3.11. The exact original Windows/CUDA environment snapshot is in backend/requirements-original-windows-cu128.lock.txt. It records Torch 2.11.0+cu128 and Ultralytics 8.4.140. Availability of those exact wheels on a fresh machine is UNVERIFIED. backend/requirements.txt lists direct backend requirements.
+Use Python 3.11. The exact original Windows/CUDA environment snapshot is in backend/requirements-original-windows-cu128.lock.txt. It records Torch 2.11.0+cu128 and Ultralytics 8.4.140. Availability of those exact wheels on a fresh machine is UNVERIFIED. backend/requirements.txt lists direct backend requirements. The pinned installation recipe and local operating boundary are in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 
-1. Create a virtual environment in this clean repository and install the direct backend requirements:
+1. Create a virtual environment in this clean repository and install the direct backend requirements for a functional setup attempt:
 
     py -3.11 -m venv .venv
     .\.venv\Scripts\python.exe -m pip install -r backend\requirements.txt
 
-   For GPU parity, install a CUDA-enabled Torch build matching the original environment before running inference. The exact wheel acquisition and a fresh install have not yet been tested. Check the locked snapshot before changing any package version.
+   This unpinned command alone does not establish numerical parity. For GPU parity, use the observed CUDA package versions in the locked snapshot and run the golden suite. The exact Torch wheel acquisition and a fresh installation have not yet succeeded.
 2. Copy .env.example to a local .env. Set SAAD_ARTIFACT_DIR to an external directory containing the five original files at the relative paths in config/model_manifest.json. On this machine, E:/SIH/SIH_Results is the audited read-only source.
 
     Copy-Item .env.example .env
 3. From the repository root, run the preflight and API:
 
-    python -B -c "import sys; sys.path.insert(0, 'backend'); from config import Settings; s=Settings.from_environment(); s.validate_assets(); print(s.manifest['model_set_id'], s.device)"
-    python -B -m uvicorn main:app --app-dir backend --host 127.0.0.1 --port 8000
+    .\.venv\Scripts\python.exe -B research/verify_fixtures.py
+    .\.venv\Scripts\python.exe -B -m uvicorn main:app --app-dir backend --host 127.0.0.1 --port 8000
 
 The API uses var/uploads, var/results and var/saad.sqlite3 under the clean repository by default. These paths are ignored by Git and writable runtime paths are validated to remain inside the clean repository. Startup fails before model loading if a checkpoint is missing or fails size/SHA-256 validation. Set `YOLO_AUTOINSTALL=False` and `YOLO_CONFIG_DIR` to a directory under `var/` before starting the API; create that directory first. This prevents Ultralytics from installing packages or writing settings outside the clean repository.
 
@@ -28,7 +28,7 @@ To run the frontend locally:
     npm ci
     npm run dev
 
-The frontend uses `VITE_API_BASE_URL` (default `http://127.0.0.1:8000`) for all API calls. Set it in `web/.env.local` if the backend runs at a different origin. The API CORS origins must include the frontend origin. Reviews and corrected boxes are saved in SQLite, so scan and report URLs work after reload and direct navigation. JSON, CSV and PDF report attachments come from the backend. Keep the API on loopback until authentication and access control are designed.
+The frontend uses `VITE_API_BASE_URL` (default `http://127.0.0.1:8000`) for all API calls. Copy `web/.env.example` to ignored `web/.env.local` if the backend runs at a different origin. The API CORS origins must include the frontend origin. Reviews and corrected boxes are saved in SQLite, so scan and report URLs work after reload and direct navigation. JSON, CSV and PDF report attachments come from the backend. Keep the API on loopback until authentication and access control are designed.
 
 ## Configuration
 
@@ -53,4 +53,4 @@ After configuring the external artifact root, run:
 
 The golden test checks the original API candidate response on the fixed GhostVision image and all detector/crop/VAE/flow/TTA/evidence fields on one image from each prepared test domain. Image SHA-256 is checked before inference. SAAD_GOLDEN_IMAGE_DIR can point to the same three basenames on another machine. Temporary request uploads stay in configured clean-repository storage and are removed after their hashes are verified.
 
-SOURCE_INVENTORY.md, ASSET_MANIFEST.md, MIGRATION_MAP.md and REFACTOR_PLAN.md contain the audit. STAGE1_VERIFICATION.md through STAGE5_VERIFICATION.md record test results and limits. Research status and reproducible commands are in [research/STATUS.md](research/STATUS.md); the 31-script source hash ledger is `research/source_manifest.json`. The local API exposes `GET /api/ready`, `/api/scans`, `/api/review-queue`, scan detail, review-event and JSON/CSV/PDF report retrieval, and `PUT /api/scans/{scan_id}/candidates/{candidate_id}/review` with `ACCEPT`, `REJECT` or `CORRECT`. The original `POST /api/analyze` response is unchanged and persists its result. Run `npm run typecheck`, `npm run lint` and `npm run build` in `web/` for frontend checks.
+SOURCE_INVENTORY.md, ASSET_MANIFEST.md, MIGRATION_MAP.md and REFACTOR_PLAN.md contain the audit. STAGE1_VERIFICATION.md through STAGE6_VERIFICATION.md record test results and limits. Research status and reproducible commands are in [research/STATUS.md](research/STATUS.md); the 31-script source hash ledger is `research/source_manifest.json`. The local API exposes `GET /api/ready`, `/api/scans`, `/api/review-queue`, scan detail, review-event and JSON/CSV/PDF report retrieval, and `PUT /api/scans/{scan_id}/candidates/{candidate_id}/review` with `ACCEPT`, `REJECT` or `CORRECT`. The original `POST /api/analyze` response is unchanged and persists its result. Run `npm run typecheck`, `npm run lint` and `npm run build` in `web/` for frontend checks.

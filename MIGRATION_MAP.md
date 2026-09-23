@@ -1,6 +1,6 @@
 # Migration map
 
-Audit classification only. **No production code has been migrated in this phase.** Each original source/config/doc file below has one disposition. `ARCHIVE` means preserve the original research script and its input/output provenance in a versioned offline area; it does not mean delete the original. `EXTERNAL ASSET` means refer by validated path/hash, never commit binary data.
+This is the **pre-migration audit classification**. Stages 1–6 subsequently implemented the production and research layout; see `STAGE6_VERIFICATION.md` for the final state. Each original source/config/doc file below has one disposition. `ARCHIVE` means preserve the original research script and its input/output provenance in a versioned offline area; it does not mean delete the original. `EXTERNAL ASSET` means refer by validated path/hash, never commit binary data.
 
 | Original file | Disposition | Proposed clean-repo location / reason |
 | --- | --- | --- |
@@ -137,7 +137,7 @@ Dataset-side documentation and configuration have individual dispositions:
 | Prepared/raw datasets, calibration tables, experiment outputs | EXTERNAL ASSET | Keep external; reference hashes, manifests and run metadata. |
 | `node_modules`, `.git`, `E:\SIH\new`, caches, uploads and generated binaries | EXCLUDE | Never migrate or commit. |
 
-## Order after approval
+## Original proposed order (historical)
 
 1. Pin the five live assets and calibration file by hash in a model manifest; add configurable paths with original defaults only for parity testing.
 2. Extract production modules without altering numerical operations; compare every fixed candidate against `audit/baseline_capture.json` and `audit/fixed_image_stage_capture.json`.

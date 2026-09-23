@@ -12,7 +12,7 @@ Audit date: 2026-09-23. SHA-256 hashes were calculated from the original read-on
 | Latent mean | `E:\SIH\SIH_Results\latent_normalizing_flow\latent_mean.pt` | 2117 | `56771caed4bbecc6ff019d4f63a3e16664ade7f196462c8ef223e031da8f351c` |
 | Latent std | `E:\SIH\SIH_Results\latent_normalizing_flow\latent_std.pt` | 2110 | `087742e906b695d06fa0a78fe7ddd31e3a02259d1569669fda0483273dbf3326` |
 
-The API percentile constants in `backend/main.py` match rounded values in `SIH_Results/saad_evidence_engine_v3/normalization_parameters.csv` (59 validation normal images). The live priority and uncertainty formulas differ from that offline v3 configuration. The checkpoints above are the files referenced by the loader; similarly named `last.pt`, v2 SSIM, MAR, and base YOLO weights are research assets.
+The original API percentile constants, now pinned in `config/live_api_v1.json` and used by `backend/saad_inference/evidence/live_api_v1.py`, match rounded values in `SIH_Results/saad_evidence_engine_v3/normalization_parameters.csv` (59 validation normal images). The live priority and uncertainty formulas differ from that offline v3 configuration. The checkpoints above are the files referenced by the loader; similarly named `last.pt`, v2 SSIM, MAR, and base YOLO weights are research assets.
 
 ## Dataset structure and integrity
 

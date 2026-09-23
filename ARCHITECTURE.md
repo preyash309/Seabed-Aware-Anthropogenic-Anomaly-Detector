@@ -57,7 +57,7 @@ The response is an untyped dictionary in Stage 2 to preserve its exact keys and 
 
 `backend/schemas.py` validates legacy analysis output and types scan detail, review actions and corrected percentage boxes. `backend/routes.py` keeps the original analysis response, then writes it through `backend/store.py`. The store has separate SQLite tables for scans, immutable candidate predictions, current review state and append-only review events. Retrieval joins reviews onto a copy of the original analysis; corrections never overwrite model boxes or scores. The review queue selects pending candidates from those tables. `GET /api/ready` checks the database after model startup.
 
-The upload path is bounded by configurable byte and pixel limits. Runtime upload, output and database paths are confined to the clean repository. A successful analysis retains its image; invalid uploads, failed detector inference and failed persistence clean up the attempted image. The API still loads the frozen model registry once per process and uses only `saad-live-api-v1` for scoring. Stage 4 adds a typed frontend client and server-backed report exports.
+The upload path is bounded by configurable byte and pixel limits. Runtime upload, output and database paths are confined to the clean repository. A successful analysis retains its image; invalid uploads, failed detector inference and failed persistence clean up the attempted image. The API still loads the frozen model registry once per process and uses only `saad-live-api-v1` for scoring. Stage 4 added a typed frontend client and server-backed report exports.
 
 ## Stage 4 browser client and reports
 
@@ -68,3 +68,7 @@ The upload path is bounded by configurable byte and pixel limits. Runtime upload
 ## Stage 5 research boundary
 
 Production imports stay within `backend/`. The 31 original research scripts are archived byte-identically under `research/original/`, with sizes and SHA-256 values in `research/source_manifest.json`. The existing `ml/` selection is historical; only the three guarded dataset builders expose a verified dry run, and their write mode requires explicit opt-in and a new output under `var/research_datasets`. The supported fixed-image offline evaluation is `research/verify_fixtures.py`, which uses the same externally configured assets and golden fixtures as production regression. No offline evidence policy enters the runtime registry or orchestration.
+
+## Local release boundary
+
+The backend loads one registry per process; `backend/routes.py` owns FastAPI and `backend/store.py` owns SQLite scans, immutable predictions, current reviews and append-only review events. The pending review queue orders globally by saved model priority, retaining creation/position order for equal scores. `backend/reporting.py` reads persisted predictions and reviews, including corrected boxes, without recomputing model evidence. The React build connects through `VITE_API_BASE_URL` and must be served from an origin allowed by `SAAD_CORS_ORIGINS`. Runtime uploads and database remain under ignored `var/` by default. Only local loopback use was validated; see [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for setup and [RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md) for gates.
