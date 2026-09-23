@@ -98,6 +98,16 @@ class DurableApi(unittest.TestCase):
             partial["candidates"][0]["vaeScore"] = None
             reopened.save_scan(partial, "0" * 64)
             self.assertEqual(reopened.get_scan(partial["surveyId"])["analysisStatus"], "partial")
+
+            newer_low = json.loads(json.dumps(analysis))
+            newer_low["surveyId"] = scan_id + "-LOW"
+            for item in newer_low["candidates"]:
+                item["priority"] = 0.01
+            reopened.save_scan(newer_low, "1" * 64)
+            ranked_queue = self.client.get("/api/review-queue").json()
+            priorities = [item["prediction"]["priority"] for item in ranked_queue]
+            self.assertEqual(priorities, sorted(priorities, reverse=True))
+            self.assertNotEqual(ranked_queue[0]["scanId"], newer_low["surveyId"])
         finally:
             for saved in set(routes.SETTINGS.upload_dir.iterdir()) - before:
                 if saved.is_file() and saved.suffix.lower() == ".png":

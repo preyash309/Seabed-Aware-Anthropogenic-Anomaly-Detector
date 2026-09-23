@@ -163,12 +163,14 @@ class ScanStore:
                 "SELECT c.scan_id,c.candidate_id,c.prediction_json,s.created_at,r.status "
                 "FROM candidates c JOIN scans s ON s.id=c.scan_id "
                 "LEFT JOIN reviews r ON r.scan_id=c.scan_id AND r.candidate_id=c.candidate_id "
-                "WHERE r.status IS NULL ORDER BY s.created_at DESC,c.position LIMIT ?", (limit,),
+                "WHERE r.status IS NULL ORDER BY s.created_at DESC,c.position",
             ).fetchall()
-        return [{
+        pending = [{
             "scanId": row["scan_id"], "candidateId": row["candidate_id"],
             "createdAt": row["created_at"], "prediction": json.loads(row["prediction_json"]),
         } for row in rows]
+        pending.sort(key=lambda item: item["prediction"]["priority"], reverse=True)
+        return pending[:limit]
 
     def review(self, scan_id: str, candidate_id: str, request: ReviewRequest) -> dict:
         status = {"ACCEPT": "ACCEPTED", "REJECT": "REJECTED", "CORRECT": "CORRECTED"}[request.action]
