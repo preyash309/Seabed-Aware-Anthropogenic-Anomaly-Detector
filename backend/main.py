@@ -22,12 +22,12 @@ from ultralytics import YOLO
 from config import Settings
 from saad_inference.detector import decode_detection, predict as detect
 
-from vae_inference import (
+from saad_inference.vae import (
     load_vae,
     extract_candidate_patch,
 )
 
-from realnvp_inference import (
+from saad_inference.realnvp import (
     load_realnvp,
     score_latent,
 )
