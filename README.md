@@ -1,6 +1,6 @@
 # SAAD
 
-SAAD combines the original YOLO26s detector, ConvVAE, RealNVP latent flow, three-variant TTA and the deployed live API evidence policy. Stages 1–4 are complete: frozen external assets are validated before loading, modular inference preserves the golden fixtures, the API stores scans and human reviews durably, and the React application uses those saved records for analysis, review, history and reports.
+SAAD combines the original YOLO26s detector, ConvVAE, RealNVP latent flow, three-variant TTA and the deployed live API evidence policy. Stages 1–5 are complete: frozen external assets are validated before loading, modular inference preserves the golden fixtures, the API stores scans and human reviews durably, the React application uses those saved records, and the original research sources are archived with hash provenance.
 
 ## Windows setup
 
@@ -53,4 +53,4 @@ After configuring the external artifact root, run:
 
 The golden test checks the original API candidate response on the fixed GhostVision image and all detector/crop/VAE/flow/TTA/evidence fields on one image from each prepared test domain. Image SHA-256 is checked before inference. SAAD_GOLDEN_IMAGE_DIR can point to the same three basenames on another machine. Temporary request uploads stay in configured clean-repository storage and are removed after their hashes are verified.
 
-SOURCE_INVENTORY.md, ASSET_MANIFEST.md, MIGRATION_MAP.md and REFACTOR_PLAN.md contain the audit. STAGE1_VERIFICATION.md through STAGE4_VERIFICATION.md record test results and limits. The local API exposes `GET /api/ready`, `/api/scans`, `/api/review-queue`, scan detail, review-event and JSON/CSV/PDF report retrieval, and `PUT /api/scans/{scan_id}/candidates/{candidate_id}/review` with `ACCEPT`, `REJECT` or `CORRECT`. The original `POST /api/analyze` response is unchanged and persists its result. Run `npm run typecheck`, `npm run lint` and `npm run build` in `web/` for frontend checks.
+SOURCE_INVENTORY.md, ASSET_MANIFEST.md, MIGRATION_MAP.md and REFACTOR_PLAN.md contain the audit. STAGE1_VERIFICATION.md through STAGE5_VERIFICATION.md record test results and limits. Research status and reproducible commands are in [research/STATUS.md](research/STATUS.md); the 31-script source hash ledger is `research/source_manifest.json`. The local API exposes `GET /api/ready`, `/api/scans`, `/api/review-queue`, scan detail, review-event and JSON/CSV/PDF report retrieval, and `PUT /api/scans/{scan_id}/candidates/{candidate_id}/review` with `ACCEPT`, `REJECT` or `CORRECT`. The original `POST /api/analyze` response is unchanged and persists its result. Run `npm run typecheck`, `npm run lint` and `npm run build` in `web/` for frontend checks.

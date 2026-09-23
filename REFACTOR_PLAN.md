@@ -1,6 +1,6 @@
 # SAAD production recovery plan — audit and baseline complete
 
-Audit date: 2026-09-23. Status: **Stage 1 complete; awaiting approval for Stage 2**. Stage 1 added portable validated configuration and preserved golden inference parity; see [STAGE1_VERIFICATION.md](STAGE1_VERIFICATION.md). No original data or checkpoint has been changed. The originals remain read-only.
+Audit date: 2026-09-23. Status as of 2026-09-24: **Stages 1–5 implemented and verified; Stage 6 release validation in progress**. Stage reports record the executed commands, results and limits. No original data or checkpoint has been changed. The originals remain read-only.
 
 ## What changed after examining the original project
 
@@ -61,6 +61,6 @@ A future root `.gitignore` must exclude `.env*` while allowing `.env.example`, m
 
 **Data/research integrity:** prepared detector counts are 6,571/1,097/544 images for train/val/test; VAE patch counts are 11,475/1,403/1,408. Existing detector train labels outnumber train images by 45. The original audit lists 685 missing annotations in source data and a SubPipeMini2 temporal-neighbor split leakage report. Inspect these before rerunning training/evaluation or interpreting domain metrics. The production refactor does not repair datasets silently.
 
-## Approval gate
+## Current boundary
 
-Stop after Stage 1. Portable configuration and asset validation are implemented and golden parity passes. Modular inference extraction, retraining, checkpoint modification, dataset copy, Git push and deployment have not begun. Approval is needed before Stage 2.
+Stages 1–5 were authorized and completed on `refactor/saad-production`. Stage 6 must verify release behavior and document unavailable gates. Retraining, checkpoint modification, copying datasets or results into Git, pushing, merging and external deployment remain outside the authorized work. The deployed policy remains `saad-live-api-v1`; offline v3 remains research provenance only.
