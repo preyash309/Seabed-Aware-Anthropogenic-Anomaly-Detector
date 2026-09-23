@@ -1,0 +1,521 @@
+{
+  "source": "E:\\SIH\\Datasets\\SAAD_baseline\\images\\test\\GhostVision__Rec9_wcp_ss_port_00049_png_jpg.rf.4e0cac2a6f42385c79c4abbb0486a92d__7c484f4422.png",
+  "source_sha256": "f1e6f50c975935c5bd75f641cf936d3ff769542b04f9481b431aa6d09204d99c",
+  "device": "cuda:0",
+  "run_1": [
+    {
+      "bbox_pixels": {
+        "x1": 119.33047485351562,
+        "y1": 55.88501739501953,
+        "x2": 176.01072692871094,
+        "y2": 151.27049255371094
+      },
+      "classId": 0,
+      "yoloConfidence": 0.17222818732261658,
+      "vaeScore": 0.0018585310317575932,
+      "flowScore": 115.62906646728516,
+      "ttaConsistency": 0.9868960265835773,
+      "priority": 0.6076296025005821,
+      "uncertainty": 0.4322333638512894,
+      "priorityLevel": "MEDIUM",
+      "evidenceProfile": "DETECTOR_DOMINANT",
+      "recommendation": "REVIEW",
+      "evidence": {
+        "raw": {
+          "yolo": 0.17222818732261658,
+          "vae": 0.0018585310317575932,
+          "flow": 115.62906646728516,
+          "tta": 0.9868960265835773
+        },
+        "normalized": {
+          "yolo": 0.995401270202765,
+          "vae": 0.023614879758880075,
+          "flow": 0.3083379624987396
+        },
+        "baseEvidence": 0.5949249998027805,
+        "agreement": 0.3881397545337677,
+        "disagreement": 0.6118602454662323,
+        "corroboration": 0.33,
+        "ttaStability": 0.9868960265835773
+      }
+    },
+    {
+      "bbox_pixels": {
+        "x1": 115.3431625366211,
+        "y1": 55.158302307128906,
+        "x2": 183.73519897460938,
+        "y2": 164.2259521484375
+      },
+      "classId": 0,
+      "yoloConfidence": 0.2368892878293991,
+      "vaeScore": 0.0021345545537769794,
+      "flowScore": 110.64338684082031,
+      "ttaConsistency": 0.9814226545039938,
+      "priority": 0.6046730397233785,
+      "uncertainty": 0.43601978370117767,
+      "priorityLevel": "MEDIUM",
+      "evidenceProfile": "DETECTOR_DOMINANT",
+      "recommendation": "REVIEW",
+      "evidence": {
+        "raw": {
+          "yolo": 0.2368892878293991,
+          "vae": 0.0021345545537769794,
+          "flow": 110.64338684082031,
+          "tta": 0.9814226545039938
+        },
+        "normalized": {
+          "yolo": 1.0,
+          "vae": 0.03183151130500185,
+          "flow": 0.28515721860074494
+        },
+        "baseEvidence": 0.5919134678412238,
+        "agreement": 0.3850763142108917,
+        "disagreement": 0.6149236857891083,
+        "corroboration": 0.33,
+        "ttaStability": 0.9814226545039938
+      }
+    },
+    {
+      "bbox_pixels": {
+        "x1": 122.95580291748047,
+        "y1": 54.755775451660156,
+        "x2": 170.41409301757812,
+        "y2": 122.00624084472656
+      },
+      "classId": 0,
+      "yoloConfidence": 0.09766634553670883,
+      "vaeScore": 0.0011697751469910145,
+      "flowScore": 123.37437438964844,
+      "ttaConsistency": 0.9816069001548694,
+      "priority": 0.4284507058999129,
+      "uncertainty": 0.23668520243188124,
+      "priorityLevel": "LOW",
+      "evidenceProfile": "DETECTOR_DOMINANT",
+      "recommendation": "LOW_PRIORITY_REVIEW",
+      "evidence": {
+        "raw": {
+          "yolo": 0.09766634553670883,
+          "vae": 0.0011697751469910145,
+          "flow": 123.37437438964844,
+          "tta": 0.9816069001548694
+        },
+        "normalized": {
+          "yolo": 0.5353705040242371,
+          "vae": 0.003112086051492295,
+          "flow": 0.34434950211038506
+        },
+        "baseEvidence": 0.3716125198555325,
+        "agreement": 0.6697610393166542,
+        "disagreement": 0.3302389606833458,
+        "corroboration": 0.33,
+        "ttaStability": 0.9816069001548694
+      }
+    },
+    {
+      "bbox_pixels": {
+        "x1": 127.01250457763672,
+        "y1": 56.91379928588867,
+        "x2": 164.55845642089844,
+        "y2": 106.80146789550781
+      },
+      "classId": 0,
+      "yoloConfidence": 0.07736381143331528,
+      "vaeScore": 0.0009715930791571736,
+      "flowScore": 122.76078033447266,
+      "ttaConsistency": 0.9841082102715255,
+      "priority": 0.34441327739076955,
+      "uncertainty": 0.19309101755442376,
+      "priorityLevel": "LOW",
+      "evidenceProfile": "WEAK_EVIDENCE",
+      "recommendation": "LOW_PRIORITY_REVIEW",
+      "evidence": {
+        "raw": {
+          "yolo": 0.07736381143331528,
+          "vae": 0.0009715930791571736,
+          "flow": 122.76078033447266,
+          "tta": 0.9841082102715255
+        },
+        "normalized": {
+          "yolo": 0.41010817016494855,
+          "vae": 0.0,
+          "flow": 0.3414966179068232
+        },
+        "baseEvidence": 0.30750307045452124,
+        "agreement": 0.7309664562344551,
+        "disagreement": 0.2690335437655449,
+        "corroboration": 0.0,
+        "ttaStability": 0.9841082102715255
+      }
+    },
+    {
+      "bbox_pixels": {
+        "x1": 130.89248657226562,
+        "y1": 60.75469207763672,
+        "x2": 159.5785369873047,
+        "y2": 97.09442138671875
+      },
+      "classId": 0,
+      "yoloConfidence": 0.06982781738042831,
+      "vaeScore": 0.0007525531109422445,
+      "flowScore": 134.29898071289062,
+      "ttaConsistency": 0.9880894638208515,
+      "priority": 0.33908835875073073,
+      "uncertainty": 0.19184141033566096,
+      "priorityLevel": "LOW",
+      "evidenceProfile": "WEAK_EVIDENCE",
+      "recommendation": "LOW_PRIORITY_REVIEW",
+      "evidence": {
+        "raw": {
+          "yolo": 0.06982781738042831,
+          "vae": 0.0007525531109422445,
+          "flow": 134.29898071289062,
+          "tta": 0.9880894638208515
+        },
+        "normalized": {
+          "yolo": 0.36361268353224513,
+          "vae": 0.0,
+          "flow": 0.3951430789822815
+        },
+        "baseEvidence": 0.300349265460807,
+        "agreement": 0.7310453578829765,
+        "disagreement": 0.26895464211702347,
+        "corroboration": 0.0,
+        "ttaStability": 0.9880894638208515
+      }
+    },
+    {
+      "bbox_pixels": {
+        "x1": 133.7725372314453,
+        "y1": 63.3546142578125,
+        "x2": 156.3031768798828,
+        "y2": 92.18380737304688
+      },
+      "classId": 0,
+      "yoloConfidence": 0.06836053729057312,
+      "vaeScore": 0.000622110441327095,
+      "flowScore": 136.23104858398438,
+      "ttaConsistency": 0.9915964424931166,
+      "priority": 0.33797387346417396,
+      "uncertainty": 0.19148460342517026,
+      "priorityLevel": "LOW",
+      "evidenceProfile": "WEAK_EVIDENCE",
+      "recommendation": "LOW_PRIORITY_REVIEW",
+      "evidence": {
+        "raw": {
+          "yolo": 0.06836053729057312,
+          "vae": 0.000622110441327095,
+          "flow": 136.23104858398438,
+          "tta": 0.9915964424931166
+        },
+        "normalized": {
+          "yolo": 0.35455987625486163,
+          "vae": 0.0,
+          "flow": 0.40412616130382345
+        },
+        "baseEvidence": 0.29851778651857785,
+        "agreement": 0.7300520911812782,
+        "disagreement": 0.26994790881872177,
+        "corroboration": 0.0,
+        "ttaStability": 0.9915964424931166
+      }
+    },
+    {
+      "bbox_pixels": {
+        "x1": 138.31747436523438,
+        "y1": 64.18827056884766,
+        "x2": 155.83938598632812,
+        "y2": 91.1956787109375
+      },
+      "classId": 0,
+      "yoloConfidence": 0.05894984304904938,
+      "vaeScore": 0.0005905983271077275,
+      "flowScore": 136.30117797851562,
+      "ttaConsistency": 0.9910305408331515,
+      "priority": 0.31477074286184503,
+      "uncertainty": 0.18223325333914875,
+      "priorityLevel": "LOW",
+      "evidenceProfile": "WEAK_EVIDENCE",
+      "recommendation": "LOW_PRIORITY_REVIEW",
+      "evidence": {
+        "raw": {
+          "yolo": 0.05894984304904938,
+          "vae": 0.0005905983271077275,
+          "flow": 136.30117797851562,
+          "tta": 0.9910305408331515
+        },
+        "normalized": {
+          "yolo": 0.2964978866566077,
+          "vae": 0.0,
+          "flow": 0.4044522254828615
+        },
+        "baseEvidence": 0.26958461097316233,
+        "agreement": 0.7435108348727226,
+        "disagreement": 0.2564891651272774,
+        "corroboration": 0.0,
+        "ttaStability": 0.9910305408331515
+      }
+    }
+  ],
+  "run_2": [
+    {
+      "bbox_pixels": {
+        "x1": 119.33047485351562,
+        "y1": 55.88501739501953,
+        "x2": 176.01072692871094,
+        "y2": 151.27049255371094
+      },
+      "classId": 0,
+      "yoloConfidence": 0.17222818732261658,
+      "vaeScore": 0.0018585310317575932,
+      "flowScore": 115.62906646728516,
+      "ttaConsistency": 0.9868960265835773,
+      "priority": 0.6076296025005821,
+      "uncertainty": 0.4322333638512894,
+      "priorityLevel": "MEDIUM",
+      "evidenceProfile": "DETECTOR_DOMINANT",
+      "recommendation": "REVIEW",
+      "evidence": {
+        "raw": {
+          "yolo": 0.17222818732261658,
+          "vae": 0.0018585310317575932,
+          "flow": 115.62906646728516,
+          "tta": 0.9868960265835773
+        },
+        "normalized": {
+          "yolo": 0.995401270202765,
+          "vae": 0.023614879758880075,
+          "flow": 0.3083379624987396
+        },
+        "baseEvidence": 0.5949249998027805,
+        "agreement": 0.3881397545337677,
+        "disagreement": 0.6118602454662323,
+        "corroboration": 0.33,
+        "ttaStability": 0.9868960265835773
+      }
+    },
+    {
+      "bbox_pixels": {
+        "x1": 115.3431625366211,
+        "y1": 55.158302307128906,
+        "x2": 183.73519897460938,
+        "y2": 164.2259521484375
+      },
+      "classId": 0,
+      "yoloConfidence": 0.2368892878293991,
+      "vaeScore": 0.0021345545537769794,
+      "flowScore": 110.64338684082031,
+      "ttaConsistency": 0.9814226545039938,
+      "priority": 0.6046730397233785,
+      "uncertainty": 0.43601978370117767,
+      "priorityLevel": "MEDIUM",
+      "evidenceProfile": "DETECTOR_DOMINANT",
+      "recommendation": "REVIEW",
+      "evidence": {
+        "raw": {
+          "yolo": 0.2368892878293991,
+          "vae": 0.0021345545537769794,
+          "flow": 110.64338684082031,
+          "tta": 0.9814226545039938
+        },
+        "normalized": {
+          "yolo": 1.0,
+          "vae": 0.03183151130500185,
+          "flow": 0.28515721860074494
+        },
+        "baseEvidence": 0.5919134678412238,
+        "agreement": 0.3850763142108917,
+        "disagreement": 0.6149236857891083,
+        "corroboration": 0.33,
+        "ttaStability": 0.9814226545039938
+      }
+    },
+    {
+      "bbox_pixels": {
+        "x1": 122.95580291748047,
+        "y1": 54.755775451660156,
+        "x2": 170.41409301757812,
+        "y2": 122.00624084472656
+      },
+      "classId": 0,
+      "yoloConfidence": 0.09766634553670883,
+      "vaeScore": 0.0011697751469910145,
+      "flowScore": 123.37437438964844,
+      "ttaConsistency": 0.9816069001548694,
+      "priority": 0.4284507058999129,
+      "uncertainty": 0.23668520243188124,
+      "priorityLevel": "LOW",
+      "evidenceProfile": "DETECTOR_DOMINANT",
+      "recommendation": "LOW_PRIORITY_REVIEW",
+      "evidence": {
+        "raw": {
+          "yolo": 0.09766634553670883,
+          "vae": 0.0011697751469910145,
+          "flow": 123.37437438964844,
+          "tta": 0.9816069001548694
+        },
+        "normalized": {
+          "yolo": 0.5353705040242371,
+          "vae": 0.003112086051492295,
+          "flow": 0.34434950211038506
+        },
+        "baseEvidence": 0.3716125198555325,
+        "agreement": 0.6697610393166542,
+        "disagreement": 0.3302389606833458,
+        "corroboration": 0.33,
+        "ttaStability": 0.9816069001548694
+      }
+    },
+    {
+      "bbox_pixels": {
+        "x1": 127.01250457763672,
+        "y1": 56.91379928588867,
+        "x2": 164.55845642089844,
+        "y2": 106.80146789550781
+      },
+      "classId": 0,
+      "yoloConfidence": 0.07736381143331528,
+      "vaeScore": 0.0009715930791571736,
+      "flowScore": 122.76078033447266,
+      "ttaConsistency": 0.9841082102715255,
+      "priority": 0.34441327739076955,
+      "uncertainty": 0.19309101755442376,
+      "priorityLevel": "LOW",
+      "evidenceProfile": "WEAK_EVIDENCE",
+      "recommendation": "LOW_PRIORITY_REVIEW",
+      "evidence": {
+        "raw": {
+          "yolo": 0.07736381143331528,
+          "vae": 0.0009715930791571736,
+          "flow": 122.76078033447266,
+          "tta": 0.9841082102715255
+        },
+        "normalized": {
+          "yolo": 0.41010817016494855,
+          "vae": 0.0,
+          "flow": 0.3414966179068232
+        },
+        "baseEvidence": 0.30750307045452124,
+        "agreement": 0.7309664562344551,
+        "disagreement": 0.2690335437655449,
+        "corroboration": 0.0,
+        "ttaStability": 0.9841082102715255
+      }
+    },
+    {
+      "bbox_pixels": {
+        "x1": 130.89248657226562,
+        "y1": 60.75469207763672,
+        "x2": 159.5785369873047,
+        "y2": 97.09442138671875
+      },
+      "classId": 0,
+      "yoloConfidence": 0.06982781738042831,
+      "vaeScore": 0.0007525531109422445,
+      "flowScore": 134.29898071289062,
+      "ttaConsistency": 0.9880894638208515,
+      "priority": 0.33908835875073073,
+      "uncertainty": 0.19184141033566096,
+      "priorityLevel": "LOW",
+      "evidenceProfile": "WEAK_EVIDENCE",
+      "recommendation": "LOW_PRIORITY_REVIEW",
+      "evidence": {
+        "raw": {
+          "yolo": 0.06982781738042831,
+          "vae": 0.0007525531109422445,
+          "flow": 134.29898071289062,
+          "tta": 0.9880894638208515
+        },
+        "normalized": {
+          "yolo": 0.36361268353224513,
+          "vae": 0.0,
+          "flow": 0.3951430789822815
+        },
+        "baseEvidence": 0.300349265460807,
+        "agreement": 0.7310453578829765,
+        "disagreement": 0.26895464211702347,
+        "corroboration": 0.0,
+        "ttaStability": 0.9880894638208515
+      }
+    },
+    {
+      "bbox_pixels": {
+        "x1": 133.7725372314453,
+        "y1": 63.3546142578125,
+        "x2": 156.3031768798828,
+        "y2": 92.18380737304688
+      },
+      "classId": 0,
+      "yoloConfidence": 0.06836053729057312,
+      "vaeScore": 0.000622110441327095,
+      "flowScore": 136.23104858398438,
+      "ttaConsistency": 0.9915964424931166,
+      "priority": 0.33797387346417396,
+      "uncertainty": 0.19148460342517026,
+      "priorityLevel": "LOW",
+      "evidenceProfile": "WEAK_EVIDENCE",
+      "recommendation": "LOW_PRIORITY_REVIEW",
+      "evidence": {
+        "raw": {
+          "yolo": 0.06836053729057312,
+          "vae": 0.000622110441327095,
+          "flow": 136.23104858398438,
+          "tta": 0.9915964424931166
+        },
+        "normalized": {
+          "yolo": 0.35455987625486163,
+          "vae": 0.0,
+          "flow": 0.40412616130382345
+        },
+        "baseEvidence": 0.29851778651857785,
+        "agreement": 0.7300520911812782,
+        "disagreement": 0.26994790881872177,
+        "corroboration": 0.0,
+        "ttaStability": 0.9915964424931166
+      }
+    },
+    {
+      "bbox_pixels": {
+        "x1": 138.31747436523438,
+        "y1": 64.18827056884766,
+        "x2": 155.83938598632812,
+        "y2": 91.1956787109375
+      },
+      "classId": 0,
+      "yoloConfidence": 0.05894984304904938,
+      "vaeScore": 0.0005905983271077275,
+      "flowScore": 136.30117797851562,
+      "ttaConsistency": 0.9910305408331515,
+      "priority": 0.31477074286184503,
+      "uncertainty": 0.18223325333914875,
+      "priorityLevel": "LOW",
+      "evidenceProfile": "WEAK_EVIDENCE",
+      "recommendation": "LOW_PRIORITY_REVIEW",
+      "evidence": {
+        "raw": {
+          "yolo": 0.05894984304904938,
+          "vae": 0.0005905983271077275,
+          "flow": 136.30117797851562,
+          "tta": 0.9910305408331515
+        },
+        "normalized": {
+          "yolo": 0.2964978866566077,
+          "vae": 0.0,
+          "flow": 0.4044522254828615
+        },
+        "baseEvidence": 0.26958461097316233,
+        "agreement": 0.7435108348727226,
+        "disagreement": 0.2564891651272774,
+        "corroboration": 0.0,
+        "ttaStability": 0.9910305408331515
+      }
+    }
+  ],
+  "repeatability_max_abs_diff": {
+    "yoloConfidence": 0.0,
+    "vaeScore": 0.0,
+    "flowScore": 0.0,
+    "ttaConsistency": 0.0,
+    "priority": 0.0,
+    "uncertainty": 0.0
+  }
+}

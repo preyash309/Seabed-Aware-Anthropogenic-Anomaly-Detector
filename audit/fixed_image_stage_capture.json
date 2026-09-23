@@ -1,0 +1,842 @@
+[
+  {
+    "image": "E:\\SIH\\Datasets\\SAAD_baseline\\images\\test\\AI4Shipwrecks__Artificial_Reef_01__8ffa726c8a.png",
+    "sha256": "3d787b7ed78f5807860cfca874160665f727d5c4ed4fe865e49ee47a072a336f",
+    "dimensions": [
+      1728,
+      2476
+    ],
+    "detections_in_yolo_order": [
+      {
+        "bbox_xyxy": [
+          300.8094787597656,
+          2086.982177734375,
+          481.1080322265625,
+          2337.365966796875
+        ],
+        "class_id": 0,
+        "yolo_confidence": 0.15013952553272247,
+        "vae_mse": 0.009143668226897717,
+        "realnvp_nll": 163.49208068847656,
+        "tta_consistency": 0.9708080142035689,
+        "evidence": {
+          "normalized": {
+            "yolo": 0.8591189069499854,
+            "vae": 0.24047787627991307,
+            "flow": 0.5308753812606866
+          },
+          "baseEvidence": 0.6369176431091813,
+          "priority": 0.673614915907702,
+          "uncertainty": 0.27411005797104226,
+          "agreement": 0.6209250539541245,
+          "disagreement": 0.37907494604587555,
+          "corroboration": 0.67,
+          "ttaStability": 0.9708080142035689,
+          "evidenceProfile": "YOLO_FLOW",
+          "priorityLevel": "MEDIUM",
+          "recommendation": "REVIEW"
+        }
+      },
+      {
+        "bbox_xyxy": [
+          1218.4603271484375,
+          1377.0181884765625,
+          1309.2301025390625,
+          1455.1583251953125
+        ],
+        "class_id": 0,
+        "yolo_confidence": 0.08882785588502884,
+        "vae_mse": 0.018781520426273346,
+        "realnvp_nll": 314.83453369140625,
+        "tta_consistency": 0.9881880680889871,
+        "evidence": {
+          "normalized": {
+            "yolo": 0.4808388955106206,
+            "vae": 0.5273761805943079,
+            "flow": 1.0
+          },
+          "baseEvidence": 0.6458946838741719,
+          "priority": 0.6825345539082361,
+          "uncertainty": 0.24980713799086254,
+          "agreement": 0.6481949165463448,
+          "disagreement": 0.35180508345365524,
+          "corroboration": 0.67,
+          "ttaStability": 0.9881880680889871,
+          "evidenceProfile": "NORMALITY_SIGNAL",
+          "priorityLevel": "MEDIUM",
+          "recommendation": "REVIEW"
+        }
+      },
+      {
+        "bbox_xyxy": [
+          1207.7252197265625,
+          1364.874267578125,
+          1324.5340576171875,
+          1466.8118896484375
+        ],
+        "class_id": 0,
+        "yolo_confidence": 0.08857861906290054,
+        "vae_mse": 0.018723517656326294,
+        "realnvp_nll": 284.04193115234375,
+        "tta_consistency": 0.9893126999057014,
+        "evidence": {
+          "normalized": {
+            "yolo": 0.4793011571246403,
+            "vae": 0.5256495618415918,
+            "flow": 1.0
+          },
+          "baseEvidence": 0.6447804909306385,
+          "priority": 0.681755662735081,
+          "uncertainty": 0.250268456646303,
+          "agreement": 0.6470539048314095,
+          "disagreement": 0.35294609516859055,
+          "corroboration": 0.67,
+          "ttaStability": 0.9893126999057014,
+          "evidenceProfile": "NORMALITY_SIGNAL",
+          "priorityLevel": "MEDIUM",
+          "recommendation": "REVIEW"
+        }
+      },
+      {
+        "bbox_xyxy": [
+          1194.56494140625,
+          1352.7205810546875,
+          1337.072265625,
+          1498.9041748046875
+        ],
+        "class_id": 0,
+        "yolo_confidence": 0.07851380854845047,
+        "vae_mse": 0.01666639745235443,
+        "realnvp_nll": 260.20904541015625,
+        "tta_consistency": 0.987934753258631,
+        "evidence": {
+          "normalized": {
+            "yolo": 0.4172034087120029,
+            "vae": 0.46441348080595996,
+            "flow": 0.9805575425258977
+          },
+          "baseEvidence": 0.5956516632749627,
+          "priority": 0.6083148059458333,
+          "uncertainty": 0.27154712231170974,
+          "agreement": 0.6172463595867157,
+          "disagreement": 0.3827536404132843,
+          "corroboration": 0.33,
+          "ttaStability": 0.987934753258631,
+          "evidenceProfile": "NORMALITY_SIGNAL",
+          "priorityLevel": "MEDIUM",
+          "recommendation": "REVIEW"
+        }
+      },
+      {
+        "bbox_xyxy": [
+          628.2175903320312,
+          2066.47900390625,
+          791.0653076171875,
+          2175.057373046875
+        ],
+        "class_id": 0,
+        "yolo_confidence": 0.07755612581968307,
+        "vae_mse": 0.010586684569716454,
+        "realnvp_nll": 212.12332153320312,
+        "tta_consistency": 0.9885979096257737,
+        "evidence": {
+          "normalized": {
+            "yolo": 0.4112947091826134,
+            "vae": 0.28343339513290766,
+            "flow": 0.7569846429708369
+          },
+          "baseEvidence": 0.48942942650913923,
+          "priority": 0.5234033321698888,
+          "uncertainty": 0.21345002948748915,
+          "agreement": 0.6999579966068268,
+          "disagreement": 0.3000420033931732,
+          "corroboration": 0.33,
+          "ttaStability": 0.9885979096257737,
+          "evidenceProfile": "NORMALITY_SIGNAL",
+          "priorityLevel": "MEDIUM",
+          "recommendation": "REVIEW"
+        }
+      },
+      {
+        "bbox_xyxy": [
+          646.55419921875,
+          2076.66455078125,
+          778.981201171875,
+          2155.712158203125
+        ],
+        "class_id": 0,
+        "yolo_confidence": 0.06890387833118439,
+        "vae_mse": 0.014133394695818424,
+        "realnvp_nll": 233.42828369140625,
+        "tta_consistency": 0.988018341077591,
+        "evidence": {
+          "normalized": {
+            "yolo": 0.35791217535614106,
+            "vae": 0.38901139114526284,
+            "flow": 0.8560413230118598
+          },
+          "baseEvidence": 0.5135707628106809,
+          "priority": 0.5426584443563038,
+          "uncertainty": 0.24283090093337745,
+          "agreement": 0.6582337096333504,
+          "disagreement": 0.3417662903666496,
+          "corroboration": 0.33,
+          "ttaStability": 0.988018341077591,
+          "evidenceProfile": "NORMALITY_SIGNAL",
+          "priorityLevel": "MEDIUM",
+          "recommendation": "REVIEW"
+        }
+      },
+      {
+        "bbox_xyxy": [
+          1154.7890625,
+          2316.97705078125,
+          1213.1953125,
+          2382.46533203125
+        ],
+        "class_id": 0,
+        "yolo_confidence": 0.06884516030550003,
+        "vae_mse": 0.016672536730766296,
+        "realnvp_nll": 285.71295166015625,
+        "tta_consistency": 0.9865875920646276,
+        "evidence": {
+          "normalized": {
+            "yolo": 0.35754989757843236,
+            "vae": 0.4645962340303964,
+            "flow": 1.0
+          },
+          "baseEvidence": 0.5716941955952954,
+          "priority": 0.5890141156826991,
+          "uncertainty": 0.2991171753110622,
+          "agreement": 0.5784379243850708,
+          "disagreement": 0.4215620756149292,
+          "corroboration": 0.33,
+          "ttaStability": 0.9865875920646276,
+          "evidenceProfile": "NORMALITY_SIGNAL",
+          "priorityLevel": "MEDIUM",
+          "recommendation": "REVIEW"
+        }
+      },
+      {
+        "bbox_xyxy": [
+          1132.294189453125,
+          2298.144775390625,
+          1236.3563232421875,
+          2401.49951171875
+        ],
+        "class_id": 0,
+        "yolo_confidence": 0.0668511912226677,
+        "vae_mse": 0.010372289456427097,
+        "realnvp_nll": 254.52670288085938,
+        "tta_consistency": 0.9887806670238853,
+        "evidence": {
+          "normalized": {
+            "yolo": 0.3452475308055528,
+            "vae": 0.27705130987329,
+            "flow": 0.9541376887083525
+          },
+          "baseEvidence": 0.5142753339899402,
+          "priority": 0.5432983338943407,
+          "uncertainty": 0.32296849202006217,
+          "agreement": 0.5434247255325317,
+          "disagreement": 0.45657527446746826,
+          "corroboration": 0.33,
+          "ttaStability": 0.9887806670238853,
+          "evidenceProfile": "NORMALITY_SIGNAL",
+          "priorityLevel": "MEDIUM",
+          "recommendation": "REVIEW"
+        }
+      },
+      {
+        "bbox_xyxy": [
+          1155.3905029296875,
+          1351.466552734375,
+          1370.2894287109375,
+          1520.8568115234375
+        ],
+        "class_id": 0,
+        "yolo_confidence": 0.06645937263965607,
+        "vae_mse": 0.013690375722944736,
+        "realnvp_nll": 243.5346221923828,
+        "tta_consistency": 0.9803171455363214,
+        "evidence": {
+          "normalized": {
+            "yolo": 0.34283009316414664,
+            "vae": 0.37582366119596977,
+            "flow": 0.9030303921237262
+          },
+          "baseEvidence": 0.5174888964583851,
+          "priority": 0.5450228317203403,
+          "uncertainty": 0.27539574356377783,
+          "agreement": 0.6150130182504654,
+          "disagreement": 0.3849869817495346,
+          "corroboration": 0.33,
+          "ttaStability": 0.9803171455363214,
+          "evidenceProfile": "NORMALITY_SIGNAL",
+          "priorityLevel": "MEDIUM",
+          "recommendation": "REVIEW"
+        }
+      },
+      {
+        "bbox_xyxy": [
+          1112.8184814453125,
+          2270.855224609375,
+          1399.7044677734375,
+          2455.122314453125
+        ],
+        "class_id": 0,
+        "yolo_confidence": 0.06574774533510208,
+        "vae_mse": 0.0064351181499660015,
+        "realnvp_nll": 179.297607421875,
+        "tta_consistency": 0.9804279144875035,
+        "evidence": {
+          "normalized": {
+            "yolo": 0.3384395034696549,
+            "vae": 0.1598501172992686,
+            "flow": 0.6043626277004676
+          },
+          "baseEvidence": 0.3824985635048215,
+          "priority": 0.43704164225260755,
+          "uncertainty": 0.1976386044540457,
+          "agreement": 0.7260471731424332,
+          "disagreement": 0.27395282685756683,
+          "corroboration": 0.33,
+          "ttaStability": 0.9804279144875035,
+          "evidenceProfile": "NORMALITY_SIGNAL",
+          "priorityLevel": "LOW",
+          "recommendation": "LOW_PRIORITY_REVIEW"
+        }
+      },
+      {
+        "bbox_xyxy": [
+          602.1676635742188,
+          2067.390380859375,
+          810.1378173828125,
+          2205.645751953125
+        ],
+        "class_id": 0,
+        "yolo_confidence": 0.061498869210481644,
+        "vae_mse": 0.007254616357386112,
+        "realnvp_nll": 208.3546600341797,
+        "tta_consistency": 0.9792642026617459,
+        "evidence": {
+          "normalized": {
+            "yolo": 0.3122248380028448,
+            "vae": 0.18424483110415008,
+            "flow": 0.7394623824983887
+          },
+          "baseEvidence": 0.41480009997176903,
+          "priority": 0.4627665002435899,
+          "uncertainty": 0.2554780765034458,
+          "agreement": 0.643918089568615,
+          "disagreement": 0.35608191043138504,
+          "corroboration": 0.33,
+          "ttaStability": 0.9792642026617459,
+          "evidenceProfile": "NORMALITY_SIGNAL",
+          "priorityLevel": "MEDIUM",
+          "recommendation": "REVIEW"
+        }
+      },
+      {
+        "bbox_xyxy": [
+          1120.4500732421875,
+          2283.214111328125,
+          1258.4342041015625,
+          2425.244140625
+        ],
+        "class_id": 0,
+        "yolo_confidence": 0.05617621913552284,
+        "vae_mse": 0.009092994034290314,
+        "realnvp_nll": 234.45950317382812,
+        "tta_consistency": 0.9831605986990196,
+        "evidence": {
+          "normalized": {
+            "yolo": 0.27938521476614675,
+            "vae": 0.2389694136441708,
+            "flow": 0.8608359421040603
+          },
+          "baseEvidence": 0.44573727274312563,
+          "priority": 0.48790587806440255,
+          "uncertainty": 0.3033611659336787,
+          "agreement": 0.5738437920808792,
+          "disagreement": 0.4261562079191208,
+          "corroboration": 0.33,
+          "ttaStability": 0.9831605986990196,
+          "evidenceProfile": "NORMALITY_SIGNAL",
+          "priorityLevel": "MEDIUM",
+          "recommendation": "REVIEW"
+        }
+      },
+      {
+        "bbox_xyxy": [
+          509.1201477050781,
+          2249.53662109375,
+          748.5698852539062,
+          2475.594482421875
+        ],
+        "class_id": 0,
+        "yolo_confidence": 0.05091650411486626,
+        "vae_mse": 0.009326108731329441,
+        "realnvp_nll": 178.9068603515625,
+        "tta_consistency": 0.328392971572424,
+        "evidence": {
+          "normalized": {
+            "yolo": 0.24693388748025516,
+            "vae": 0.2459087409867941,
+            "flow": 0.6025458627968975
+          },
+          "baseEvidence": 0.3534124507765556,
+          "priority": 0.34856925777848685,
+          "uncertainty": 0.3777553091892168,
+          "agreement": 0.7481811419129372,
+          "disagreement": 0.25181885808706284,
+          "corroboration": 0.33,
+          "ttaStability": 0.328392971572424,
+          "evidenceProfile": "NORMALITY_SIGNAL",
+          "priorityLevel": "LOW",
+          "recommendation": "LOW_PRIORITY_REVIEW"
+        }
+      },
+      {
+        "bbox_xyxy": [
+          1149.8096923828125,
+          2308.86572265625,
+          1230.4794921875,
+          2391.527587890625
+        ],
+        "class_id": 0,
+        "yolo_confidence": 0.05070499703288078,
+        "vae_mse": 0.012356428429484367,
+        "realnvp_nll": 269.7266845703125,
+        "tta_consistency": 0.9851099162186902,
+        "evidence": {
+          "normalized": {
+            "yolo": 0.24562893359704313,
+            "vae": 0.33611489531934124,
+            "flow": 1.0
+          },
+          "baseEvidence": 0.4900374458623898,
+          "priority": 0.5235409483117809,
+          "uncertainty": 0.3576041651104176,
+          "agreement": 0.49551837146282196,
+          "disagreement": 0.504481628537178,
+          "corroboration": 0.33,
+          "ttaStability": 0.9851099162186902,
+          "evidenceProfile": "NORMALITY_SIGNAL",
+          "priorityLevel": "MEDIUM",
+          "recommendation": "REVIEW"
+        }
+      }
+    ]
+  },
+  {
+    "image": "E:\\SIH\\Datasets\\SAAD_baseline\\images\\test\\GhostVision__Rec9_wcp_ss_port_00049_png_jpg.rf.4e0cac2a6f42385c79c4abbb0486a92d__7c484f4422.png",
+    "sha256": "f1e6f50c975935c5bd75f641cf936d3ff769542b04f9481b431aa6d09204d99c",
+    "dimensions": [
+      640,
+      640
+    ],
+    "detections_in_yolo_order": [
+      {
+        "bbox_xyxy": [
+          115.3431625366211,
+          55.158302307128906,
+          183.73519897460938,
+          164.2259521484375
+        ],
+        "class_id": 0,
+        "yolo_confidence": 0.2368892878293991,
+        "vae_mse": 0.0021345545537769794,
+        "realnvp_nll": 110.64338684082031,
+        "tta_consistency": 0.9814226545039938,
+        "evidence": {
+          "normalized": {
+            "yolo": 1.0,
+            "vae": 0.03183151130500185,
+            "flow": 0.28515721860074494
+          },
+          "baseEvidence": 0.5919134678412238,
+          "priority": 0.6046730397233785,
+          "uncertainty": 0.43601978370117767,
+          "agreement": 0.3850763142108917,
+          "disagreement": 0.6149236857891083,
+          "corroboration": 0.33,
+          "ttaStability": 0.9814226545039938,
+          "evidenceProfile": "DETECTOR_DOMINANT",
+          "priorityLevel": "MEDIUM",
+          "recommendation": "REVIEW"
+        }
+      },
+      {
+        "bbox_xyxy": [
+          119.33047485351562,
+          55.88501739501953,
+          176.01072692871094,
+          151.27049255371094
+        ],
+        "class_id": 0,
+        "yolo_confidence": 0.17222818732261658,
+        "vae_mse": 0.0018585310317575932,
+        "realnvp_nll": 115.62906646728516,
+        "tta_consistency": 0.9868960265835773,
+        "evidence": {
+          "normalized": {
+            "yolo": 0.995401270202765,
+            "vae": 0.023614879758880075,
+            "flow": 0.3083379624987396
+          },
+          "baseEvidence": 0.5949249998027805,
+          "priority": 0.6076296025005821,
+          "uncertainty": 0.4322333638512894,
+          "agreement": 0.3881397545337677,
+          "disagreement": 0.6118602454662323,
+          "corroboration": 0.33,
+          "ttaStability": 0.9868960265835773,
+          "evidenceProfile": "DETECTOR_DOMINANT",
+          "priorityLevel": "MEDIUM",
+          "recommendation": "REVIEW"
+        }
+      },
+      {
+        "bbox_xyxy": [
+          122.95580291748047,
+          54.755775451660156,
+          170.41409301757812,
+          122.00624084472656
+        ],
+        "class_id": 0,
+        "yolo_confidence": 0.09766634553670883,
+        "vae_mse": 0.0011697751469910145,
+        "realnvp_nll": 123.37437438964844,
+        "tta_consistency": 0.9816069001548694,
+        "evidence": {
+          "normalized": {
+            "yolo": 0.5353705040242371,
+            "vae": 0.003112086051492295,
+            "flow": 0.34434950211038506
+          },
+          "baseEvidence": 0.3716125198555325,
+          "priority": 0.4284507058999129,
+          "uncertainty": 0.23668520243188124,
+          "agreement": 0.6697610393166542,
+          "disagreement": 0.3302389606833458,
+          "corroboration": 0.33,
+          "ttaStability": 0.9816069001548694,
+          "evidenceProfile": "DETECTOR_DOMINANT",
+          "priorityLevel": "LOW",
+          "recommendation": "LOW_PRIORITY_REVIEW"
+        }
+      },
+      {
+        "bbox_xyxy": [
+          127.01250457763672,
+          56.91379928588867,
+          164.55845642089844,
+          106.80146789550781
+        ],
+        "class_id": 0,
+        "yolo_confidence": 0.07736381143331528,
+        "vae_mse": 0.0009715930791571736,
+        "realnvp_nll": 122.76078033447266,
+        "tta_consistency": 0.9841082102715255,
+        "evidence": {
+          "normalized": {
+            "yolo": 0.41010817016494855,
+            "vae": 0.0,
+            "flow": 0.3414966179068232
+          },
+          "baseEvidence": 0.30750307045452124,
+          "priority": 0.34441327739076955,
+          "uncertainty": 0.19309101755442376,
+          "agreement": 0.7309664562344551,
+          "disagreement": 0.2690335437655449,
+          "corroboration": 0.0,
+          "ttaStability": 0.9841082102715255,
+          "evidenceProfile": "WEAK_EVIDENCE",
+          "priorityLevel": "LOW",
+          "recommendation": "LOW_PRIORITY_REVIEW"
+        }
+      },
+      {
+        "bbox_xyxy": [
+          130.89248657226562,
+          60.75469207763672,
+          159.5785369873047,
+          97.09442138671875
+        ],
+        "class_id": 0,
+        "yolo_confidence": 0.06982781738042831,
+        "vae_mse": 0.0007525531109422445,
+        "realnvp_nll": 134.29898071289062,
+        "tta_consistency": 0.9880894638208515,
+        "evidence": {
+          "normalized": {
+            "yolo": 0.36361268353224513,
+            "vae": 0.0,
+            "flow": 0.3951430789822815
+          },
+          "baseEvidence": 0.300349265460807,
+          "priority": 0.33908835875073073,
+          "uncertainty": 0.19184141033566096,
+          "agreement": 0.7310453578829765,
+          "disagreement": 0.26895464211702347,
+          "corroboration": 0.0,
+          "ttaStability": 0.9880894638208515,
+          "evidenceProfile": "WEAK_EVIDENCE",
+          "priorityLevel": "LOW",
+          "recommendation": "LOW_PRIORITY_REVIEW"
+        }
+      },
+      {
+        "bbox_xyxy": [
+          133.7725372314453,
+          63.3546142578125,
+          156.3031768798828,
+          92.18380737304688
+        ],
+        "class_id": 0,
+        "yolo_confidence": 0.06836053729057312,
+        "vae_mse": 0.000622110441327095,
+        "realnvp_nll": 136.23104858398438,
+        "tta_consistency": 0.9915964424931166,
+        "evidence": {
+          "normalized": {
+            "yolo": 0.35455987625486163,
+            "vae": 0.0,
+            "flow": 0.40412616130382345
+          },
+          "baseEvidence": 0.29851778651857785,
+          "priority": 0.33797387346417396,
+          "uncertainty": 0.19148460342517026,
+          "agreement": 0.7300520911812782,
+          "disagreement": 0.26994790881872177,
+          "corroboration": 0.0,
+          "ttaStability": 0.9915964424931166,
+          "evidenceProfile": "WEAK_EVIDENCE",
+          "priorityLevel": "LOW",
+          "recommendation": "LOW_PRIORITY_REVIEW"
+        }
+      },
+      {
+        "bbox_xyxy": [
+          138.31747436523438,
+          64.18827056884766,
+          155.83938598632812,
+          91.1956787109375
+        ],
+        "class_id": 0,
+        "yolo_confidence": 0.05894984304904938,
+        "vae_mse": 0.0005905983271077275,
+        "realnvp_nll": 136.30117797851562,
+        "tta_consistency": 0.9910305408331515,
+        "evidence": {
+          "normalized": {
+            "yolo": 0.2964978866566077,
+            "vae": 0.0,
+            "flow": 0.4044522254828615
+          },
+          "baseEvidence": 0.26958461097316233,
+          "priority": 0.31477074286184503,
+          "uncertainty": 0.18223325333914875,
+          "agreement": 0.7435108348727226,
+          "disagreement": 0.2564891651272774,
+          "corroboration": 0.0,
+          "ttaStability": 0.9910305408331515,
+          "evidenceProfile": "WEAK_EVIDENCE",
+          "priorityLevel": "LOW",
+          "recommendation": "LOW_PRIORITY_REVIEW"
+        }
+      }
+    ]
+  },
+  {
+    "image": "E:\\SIH\\Datasets\\SAAD_baseline\\images\\test\\SubPipeMini2__1693570200.990__65ff02946b.png",
+    "sha256": "13f06c56478d1db7064102682a6f4248d1250a596d5c3ed68113ccb07e11c1e5",
+    "dimensions": [
+      2500,
+      500
+    ],
+    "detections_in_yolo_order": [
+      {
+        "bbox_xyxy": [
+          1729.6943359375,
+          0.6927400827407837,
+          2005.4268798828125,
+          500.0
+        ],
+        "class_id": 0,
+        "yolo_confidence": 0.38413289189338684,
+        "vae_mse": 0.0029156929813325405,
+        "realnvp_nll": 169.43655395507812,
+        "tta_consistency": 0.9721160831735866,
+        "evidence": {
+          "normalized": {
+            "yolo": 1.0,
+            "vae": 0.05508433627725257,
+            "flow": 0.5585140028179392
+          },
+          "baseEvidence": 0.6785710681008322,
+          "priority": 0.7070684627980244,
+          "uncertainty": 0.41370339087586594,
+          "agreement": 0.420945405960083,
+          "disagreement": 0.579054594039917,
+          "corroboration": 0.67,
+          "ttaStability": 0.9721160831735866,
+          "evidenceProfile": "YOLO_FLOW",
+          "priorityLevel": "MEDIUM",
+          "recommendation": "REVIEW"
+        }
+      },
+      {
+        "bbox_xyxy": [
+          1744.984619140625,
+          6.070375442504883,
+          1968.282470703125,
+          500.0
+        ],
+        "class_id": 0,
+        "yolo_confidence": 0.09489662945270538,
+        "vae_mse": 0.0028700954280793667,
+        "realnvp_nll": 166.4167938232422,
+        "tta_consistency": 0.9808159242205275,
+        "evidence": {
+          "normalized": {
+            "yolo": 0.5182819426139701,
+            "vae": 0.053726994367603,
+            "flow": 0.5444737331869164
+          },
+          "baseEvidence": 0.4332284901365806,
+          "priority": 0.5116643845313172,
+          "uncertainty": 0.24244675278268896,
+          "agreement": 0.6618692427873611,
+          "disagreement": 0.33813075721263885,
+          "corroboration": 0.67,
+          "ttaStability": 0.9808159242205275,
+          "evidenceProfile": "YOLO_FLOW",
+          "priorityLevel": "MEDIUM",
+          "recommendation": "REVIEW"
+        }
+      },
+      {
+        "bbox_xyxy": [
+          2176.91796875,
+          315.0025634765625,
+          2437.344482421875,
+          489.097412109375
+        ],
+        "class_id": 0,
+        "yolo_confidence": 0.08442853391170502,
+        "vae_mse": 0.006948186084628105,
+        "realnvp_nll": 229.19558715820312,
+        "tta_consistency": 0.9742875319438351,
+        "evidence": {
+          "normalized": {
+            "yolo": 0.4536960110327227,
+            "vae": 0.1751230554402148,
+            "flow": 0.836361547798609
+          },
+          "baseEvidence": 0.512781080943987,
+          "priority": 0.5406536179495731,
+          "uncertainty": 0.2923289828980812,
+          "agreement": 0.5934067964553833,
+          "disagreement": 0.4065932035446167,
+          "corroboration": 0.33,
+          "ttaStability": 0.9742875319438351,
+          "evidenceProfile": "NORMALITY_SIGNAL",
+          "priorityLevel": "MEDIUM",
+          "recommendation": "REVIEW"
+        }
+      },
+      {
+        "bbox_xyxy": [
+          573.2987060546875,
+          186.52359008789062,
+          750.3143310546875,
+          339.27447509765625
+        ],
+        "class_id": 0,
+        "yolo_confidence": 0.06864652037620544,
+        "vae_mse": 0.0034470760729163885,
+        "realnvp_nll": 175.26202392578125,
+        "tta_consistency": 0.962886667235375,
+        "evidence": {
+          "normalized": {
+            "yolo": 0.35632433130112096,
+            "vae": 0.0709024775770977,
+            "flow": 0.5855993226927901
+          },
+          "baseEvidence": 0.36802245797381705,
+          "priority": 0.42370663310259116,
+          "uncertainty": 0.23220146567115768,
+          "agreement": 0.6841893345117569,
+          "disagreement": 0.3158106654882431,
+          "corroboration": 0.33,
+          "ttaStability": 0.962886667235375,
+          "evidenceProfile": "NORMALITY_SIGNAL",
+          "priorityLevel": "LOW",
+          "recommendation": "LOW_PRIORITY_REVIEW"
+        }
+      },
+      {
+        "bbox_xyxy": [
+          2214.40966796875,
+          337.8065185546875,
+          2358.95556640625,
+          454.1631164550781
+        ],
+        "class_id": 0,
+        "yolo_confidence": 0.05504639819264412,
+        "vae_mse": 0.006846321746706963,
+        "realnvp_nll": 229.040283203125,
+        "tta_consistency": 0.9916810122860661,
+        "evidence": {
+          "normalized": {
+            "yolo": 0.27241445892712884,
+            "vae": 0.17209077135708914,
+            "flow": 0.8356394674647862
+          },
+          "baseEvidence": 0.4213172239744181,
+          "priority": 0.46922188040814117,
+          "uncertainty": 0.30913727945884495,
+          "agreement": 0.5619405955076218,
+          "disagreement": 0.43805940449237823,
+          "corroboration": 0.33,
+          "ttaStability": 0.9916810122860661,
+          "evidenceProfile": "NORMALITY_SIGNAL",
+          "priorityLevel": "MEDIUM",
+          "recommendation": "REVIEW"
+        }
+      },
+      {
+        "bbox_xyxy": [
+          548.3864135742188,
+          168.6848602294922,
+          885.9449462890625,
+          370.56304931640625
+        ],
+        "class_id": 0,
+        "yolo_confidence": 0.05379617586731911,
+        "vae_mse": 0.0022758017294108868,
+        "realnvp_nll": 110.07300567626953,
+        "tta_consistency": 0.8278219088551078,
+        "evidence": {
+          "normalized": {
+            "yolo": 0.26470085206821853,
+            "vae": 0.03603613847091655,
+            "flow": 0.2825052512281308
+          },
+          "baseEvidence": 0.2243092290967318,
+          "priority": 0.2622295741628962,
+          "uncertainty": 0.16949047119508168,
+          "agreement": 0.8316613659262657,
+          "disagreement": 0.16833863407373428,
+          "corroboration": 0.0,
+          "ttaStability": 0.8278219088551078,
+          "evidenceProfile": "WEAK_EVIDENCE",
+          "priorityLevel": "LOW",
+          "recommendation": "LOW_PRIORITY_REVIEW"
+        }
+      }
+    ]
+  }
+]
