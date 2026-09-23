@@ -20,6 +20,7 @@ from PIL import Image
 from ultralytics import YOLO
 
 from config import Settings
+from saad_inference.detector import decode_detection, predict as detect
 
 from vae_inference import (
     load_vae,
@@ -1007,20 +1008,7 @@ async def analyze(
 
     try:
 
-        results = yolo_model.predict(
-
-            source=str(
-                output_path
-            ),
-
-            imgsz=640,
-
-            conf=0.05,
-
-            device=DEVICE,
-
-            verbose=False,
-        )
+        results = detect(yolo_model, output_path, DEVICE)
 
     except Exception as exc:
 
@@ -1064,152 +1052,9 @@ async def analyze(
                 # YOLO coordinates
                 # ------------------------------------------------
 
-                xyxy = (
-                    boxes.xyxy[index]
-                    .detach()
-                    .cpu()
-                    .numpy()
+                confidence, class_id, bbox, bbox_pixels = decode_detection(
+                    boxes, index, width, height, base_tta_detections
                 )
-
-
-                confidence = float(
-                    boxes.conf[index]
-                    .detach()
-                    .cpu()
-                    .item()
-                )
-
-
-                class_id = int(
-                    boxes.cls[index]
-                    .detach()
-                    .cpu()
-                    .item()
-                )
-
-
-                x1, y1, x2, y2 = map(
-                    float,
-                    xyxy,
-                )
-
-
-                # ------------------------------------------------
-                # Clamp
-                # ------------------------------------------------
-
-                x1 = max(
-                    0.0,
-                    min(x1, width),
-                )
-
-                y1 = max(
-                    0.0,
-                    min(y1, height),
-                )
-
-                x2 = max(
-                    0.0,
-                    min(x2, width),
-                )
-
-                y2 = max(
-                    0.0,
-                    min(y2, height),
-                )
-
-
-                box_width = max(
-                    0.0,
-                    x2 - x1,
-                )
-
-                box_height = max(
-                    0.0,
-                    y2 - y1,
-                )
-
-
-                # ------------------------------------------------
-                # Preserve raw detection for TTA
-                # ------------------------------------------------
-
-                base_tta_detections.append(
-                    {
-                        "box": [
-                            x1,
-                            y1,
-                            x2,
-                            y2,
-                        ],
-
-                        "confidence":
-                            confidence,
-
-                        "classId":
-                            class_id,
-                    }
-                )
-
-
-                # ------------------------------------------------
-                # Percentage bbox
-                # ------------------------------------------------
-
-                bbox = {
-
-                    "x":
-                        (
-                            x1
-                            /
-                            width
-                        )
-                        *
-                        100.0,
-
-                    "y":
-                        (
-                            y1
-                            /
-                            height
-                        )
-                        *
-                        100.0,
-
-                    "width":
-                        (
-                            box_width
-                            /
-                            width
-                        )
-                        *
-                        100.0,
-
-                    "height":
-                        (
-                            box_height
-                            /
-                            height
-                        )
-                        *
-                        100.0,
-                }
-
-
-                bbox_pixels = {
-
-                    "x1":
-                        x1,
-
-                    "y1":
-                        y1,
-
-                    "x2":
-                        x2,
-
-                    "y2":
-                        y2,
-                }
 
 
                 # ====================================================
