@@ -1,6 +1,7 @@
 """FastAPI wiring and stable live endpoint contract."""
 
 import hashlib
+import json
 from pathlib import Path
 import sqlite3
 from urllib.parse import urlsplit
@@ -8,11 +9,13 @@ from urllib.parse import urlsplit
 import torch
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import ValidationError
 
 from config import Settings
 from schemas import ReviewRequest, ReviewState, ScanDetail
+from reporting import report_csv, report_data, report_pdf
 from saad_inference.registry import load_models
 from saad_inference.service import analyze as run_analysis
 from store import CandidateNotFound, ScanNotFound, ScanStore
@@ -308,6 +311,39 @@ def review_events(scan_id: str):
         raise HTTPException(status_code=404, detail="Scan not found") from exc
     except sqlite3.DatabaseError as exc:
         raise HTTPException(status_code=503, detail=f"Scan storage unavailable: {exc}") from exc
+
+
+@app.get("/api/scans/{scan_id}/report")
+def scan_report(scan_id: str, format: str = "json", download: bool = False):
+    if format not in {"json", "csv", "pdf"}:
+        raise HTTPException(status_code=422, detail="format must be json, csv or pdf")
+    try:
+        store = available_store()
+        detail = store.get_scan(scan_id)
+        events = store.events(scan_id)
+    except ScanNotFound as exc:
+        raise HTTPException(status_code=404, detail="Scan not found") from exc
+    except sqlite3.DatabaseError as exc:
+        raise HTTPException(status_code=503, detail=f"Scan storage unavailable: {exc}") from exc
+    data = report_data(
+        detail, events, SETTINGS.manifest["model_set_id"], SETTINGS.calibration["policy_id"]
+    )
+    if format == "csv":
+        return Response(
+            report_csv(data), media_type="text/csv; charset=utf-8",
+            headers={"Content-Disposition": f'attachment; filename="{scan_id}.csv"'},
+        )
+    if format == "pdf":
+        return Response(
+            report_pdf(data), media_type="application/pdf",
+            headers={"Content-Disposition": f'attachment; filename="{scan_id}.pdf"'},
+        )
+    if download:
+        return Response(
+            json.dumps(data), media_type="application/json",
+            headers={"Content-Disposition": f'attachment; filename="{scan_id}.json"'},
+        )
+    return data
 
 
 @app.get("/")

@@ -74,6 +74,25 @@ class DurableApi(unittest.TestCase):
             self.assertEqual(saved["analysis"]["candidates"][0]["bbox"], candidate["bbox"])
             self.assertEqual(saved["analysis"]["candidates"][0]["priority"], candidate["priority"])
 
+            report = self.client.get(f"/api/scans/{scan_id}/report")
+            self.assertEqual(report.status_code, 200, report.text)
+            report_data = report.json()
+            self.assertEqual(report_data["policyId"], "saad-live-api-v1")
+            self.assertEqual(report_data["candidates"][0]["prediction"]["bbox"], candidate["bbox"])
+            self.assertEqual(report_data["candidates"][0]["review"]["correctedBBox"], corrected_box)
+            self.assertEqual(len(report_data["reviewEvents"]), 2)
+            json_download = self.client.get(f"/api/scans/{scan_id}/report?format=json&download=true")
+            self.assertEqual(json_download.status_code, 200)
+            self.assertIn("attachment", json_download.headers["content-disposition"])
+            self.assertEqual(json_download.json()["candidates"][0]["review"]["correctedBBox"], corrected_box)
+            csv = self.client.get(f"/api/scans/{scan_id}/report?format=csv")
+            self.assertEqual(csv.status_code, 200)
+            self.assertIn("corrected_x", csv.text)
+            self.assertIn("CORRECTED", csv.text)
+            pdf = self.client.get(f"/api/scans/{scan_id}/report?format=pdf")
+            self.assertEqual(pdf.status_code, 200)
+            self.assertTrue(pdf.content.startswith(b"%PDF-"))
+
             partial = json.loads(json.dumps(analysis))
             partial["surveyId"] = scan_id + "-PARTIAL"
             partial["candidates"][0]["vaeScore"] = None
