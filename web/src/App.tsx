@@ -4,6 +4,8 @@ import { AppShell } from "./components/layout/AppShell";
 import { Analysis } from "./pages/Analysis";
 import { NewScan } from "./pages/NewScan";
 import { Reports } from "./pages/Reports";
+import { History } from "./pages/History";
+import { ReviewQueue } from "./pages/ReviewQueue";
 
 function Overview() {
   return (
@@ -218,12 +220,12 @@ function App() {
 
           <Route
             path="/history"
-            element={<Placeholder title="Scan History" />}
+            element={<History />}
           />
 
           <Route
             path="/review"
-            element={<Placeholder title="Review Queue" />}
+            element={<ReviewQueue />}
           />
 
           <Route

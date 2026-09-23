@@ -201,13 +201,16 @@ export function SonarViewer({
   function beginMove(
     event: React.PointerEvent,
   ) {
+    const frame = imageFrame;
     if (
       !correctionMode ||
       !correctionBox ||
-      !imageFrame
+      !frame
     ) {
       return;
     }
+    const frameWidth = frame.width;
+    const frameHeight = frame.height;
 
     event.preventDefault();
     event.stopPropagation();
@@ -235,12 +238,12 @@ export function SonarViewer({
     ) {
       const dx =
         ((moveEvent.clientX - startX) /
-          imageFrame.width) *
+          frameWidth) *
         100;
 
       const dy =
         ((moveEvent.clientY - startY) /
-          imageFrame.height) *
+          frameHeight) *
         100;
 
 
@@ -300,13 +303,16 @@ export function SonarViewer({
     event: React.PointerEvent,
     corner: Corner,
   ) {
+    const frame = imageFrame;
     if (
       !correctionMode ||
       !correctionBox ||
-      !imageFrame
+      !frame
     ) {
       return;
     }
+    const frameWidth = frame.width;
+    const frameHeight = frame.height;
 
     event.preventDefault();
     event.stopPropagation();
@@ -334,12 +340,12 @@ export function SonarViewer({
     ) {
       const dx =
         ((moveEvent.clientX - startX) /
-          imageFrame.width) *
+          frameWidth) *
         100;
 
       const dy =
         ((moveEvent.clientY - startY) /
-          imageFrame.height) *
+          frameHeight) *
         100;
 
 

@@ -16,6 +16,7 @@ interface EvidencePanelProps {
   onAccept: () => void;
   onReject: () => void;
   onCorrect: () => void;
+  disabled?: boolean;
 }
 
 export function EvidencePanel({
@@ -23,6 +24,7 @@ export function EvidencePanel({
   onAccept,
   onReject,
   onCorrect,
+  disabled = false,
 }: EvidencePanelProps) {
   return (
     <div className="rounded-2xl border border-border/70 bg-card/40">
@@ -82,16 +84,16 @@ export function EvidencePanel({
 
           <EvidenceBar
             icon={CircleAlert}
-            label="VAE normality"
-            description="Deviation from normal seabed"
-            value={candidate.vaeScore}
+            label="VAE deviation"
+            description={`Normalized evidence · MSE ${candidate.vaeScore?.toPrecision(4) ?? "unavailable"}`}
+            value={candidate.vaeScore === null ? null : candidate.evidence.normalized.vae}
           />
 
           <EvidenceBar
             icon={Fingerprint}
             label="RealNVP novelty"
-            description="Latent normality likelihood"
-            value={candidate.flowScore}
+            description={`Normalized evidence · NLL ${candidate.flowScore?.toFixed(2) ?? "unavailable"}`}
+            value={candidate.flowScore === null ? null : candidate.evidence.normalized.flow}
           />
 
           <EvidenceBar
@@ -126,6 +128,7 @@ export function EvidencePanel({
           <button
             type="button"
             onClick={onAccept}
+            disabled={disabled}
             className="flex items-center justify-center gap-2 rounded-lg bg-emerald-400/10 px-3 py-2.5 text-xs font-medium text-emerald-300 transition-colors hover:bg-emerald-400/20"
           >
             <Check className="h-3.5 w-3.5" />
@@ -135,6 +138,7 @@ export function EvidencePanel({
           <button
             type="button"
             onClick={onReject}
+            disabled={disabled}
             className="flex items-center justify-center gap-2 rounded-lg bg-red-400/10 px-3 py-2.5 text-xs font-medium text-red-300 transition-colors hover:bg-red-400/20"
           >
             <X className="h-3.5 w-3.5" />
@@ -144,6 +148,7 @@ export function EvidencePanel({
           <button
             type="button"
             onClick={onCorrect}
+            disabled={disabled}
             className="flex items-center justify-center gap-2 rounded-lg border border-border/70 px-3 py-2.5 text-xs font-medium text-foreground transition-colors hover:bg-muted"
           >
             <UserRoundCheck className="h-3.5 w-3.5" />
@@ -164,9 +169,9 @@ function EvidenceBar({
   icon: typeof ScanSearch;
   label: string;
   description: string;
-  value: number;
+  value: number | null;
 }) {
-  const percentage = Math.max(0, Math.min(100, value * 100));
+  const percentage = value === null ? null : Math.max(0, Math.min(100, value * 100));
 
   return (
     <div>
@@ -182,14 +187,14 @@ function EvidenceBar({
         </div>
 
         <span className="font-mono text-[10px] text-foreground/80">
-          {percentage.toFixed(0)}%
+          {percentage === null ? "Unavailable" : `${percentage.toFixed(0)}%`}
         </span>
       </div>
 
       <div className="h-1.5 overflow-hidden rounded-full bg-muted/50">
         <div
           className="h-full rounded-full bg-cyan-400/80 transition-all duration-500"
-          style={{ width: `${percentage}%` }}
+          style={{ width: `${percentage ?? 0}%` }}
         />
       </div>
     </div>

@@ -40,7 +40,6 @@ const navigation = [
         label: "Review Queue",
         icon: ShieldCheck,
         path: "/review",
-        badge: "07",
       },
     ],
   },
@@ -119,11 +118,6 @@ export function Sidebar() {
                           {item.label}
                         </span>
 
-                        {item.badge && (
-                          <span className="rounded-md bg-amber-400/10 px-1.5 py-0.5 font-mono text-[10px] text-amber-300">
-                            {item.badge}
-                          </span>
-                        )}
                       </>
                     )}
                   </NavLink>
@@ -145,12 +139,12 @@ export function Sidebar() {
             <Activity className="h-3.5 w-3.5 text-emerald-400" />
 
             <span className="text-[10px] font-semibold uppercase tracking-wider text-emerald-300">
-              System operational
+              Local analysis workspace
             </span>
           </div>
 
           <p className="mt-2 font-mono text-[9px] text-muted-foreground">
-            SAAD v0.1 • LOCAL
+            SAAD • WORKSPACE
           </p>
         </div>
       </div>

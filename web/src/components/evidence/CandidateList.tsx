@@ -41,36 +41,6 @@ function levelStyles(level: Candidate["priorityLevel"]) {
   }
 }
 
-/**
- * Convert raw RealNVP NLL into the same validation-normalized
- * novelty percentage used by the SAAD evidence system.
- *
- * Calibration:
- *   P5  = 49.3122
- *   P95 = 264.3907
- *
- * Values below P5 -> 0%
- * Values above P95 -> 100%
- */
-function flowNoveltyPercent(value: number | null | undefined) {
-  if (value == null || !Number.isFinite(value)) {
-    return null;
-  }
-
-  const P5 = 49.3122;
-  const P95 = 264.3907;
-
-  const normalized =
-    (value - P5) / (P95 - P5);
-
-  const clamped = Math.max(
-    0,
-    Math.min(1, normalized),
-  );
-
-  return clamped * 100;
-}
-
 export function CandidateList({
   candidates,
   selectedCandidateId,
@@ -112,9 +82,9 @@ export function CandidateList({
                 ? CircleHelp
                 : AlertTriangle;
 
-          const flowPercent = flowNoveltyPercent(
-            candidate.flowScore,
-          );
+          const flowEvidence = candidate.flowScore === null
+            ? null
+            : candidate.evidence.normalized.flow;
 
           return (
             <button
@@ -165,7 +135,7 @@ export function CandidateList({
 
                 <Metric
                   label="FLOW"
-                  value={flowPercent}
+                  value={flowEvidence}
                 />
 
                 <Metric
@@ -209,7 +179,7 @@ function Metric({
       </p>
 
       <p className="mt-0.5 font-mono text-[10px] text-foreground/80">
-        {value.toFixed(0)}%
+        {(value * 100).toFixed(0)}%
       </p>
     </div>
   );

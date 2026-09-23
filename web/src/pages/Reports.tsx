@@ -1,81 +1,56 @@
 import { useEffect, useState } from "react";
 import {
-  ArrowLeft,
-  CheckCircle2,
-  Download,
-  FileJson,
-  FileSpreadsheet,
-  FileText,
-  ShieldAlert,
+  ArrowLeft, CheckCircle2, Download, FileJson, FileSpreadsheet, FileText, ShieldAlert,
 } from "lucide-react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
+import { adaptScan } from "../lib/adapt";
+import { getReport, getScan, listScans, reportUrl } from "../lib/api";
 import type { AnalysisResult, Candidate } from "../types/saad";
 
-type ReportData = AnalysisResult & {
-  candidates: Candidate[];
-  generatedAt?: string;
-};
+type ReportData = AnalysisResult & { generatedAt: string };
 
 export function Reports() {
   const navigate = useNavigate();
-  const location = useLocation();
-
+  const [search] = useSearchParams();
+  const scanId = search.get("scanId");
   const [report, setReport] = useState<ReportData | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const navigationReport =
-      location.state?.reportData as ReportData | undefined;
-
-    if (navigationReport) {
-      setReport(navigationReport);
-
-      localStorage.setItem(
-        "saad-latest-report",
-        JSON.stringify(navigationReport),
-      );
-
-      return;
+    let active = true;
+    if (!scanId) {
+      listScans()
+        .then((scans) => {
+          if (active && scans.length) navigate(`/reports?scanId=${encodeURIComponent(scans[0].scanId)}`, { replace: true });
+        })
+        .catch((cause: unknown) => { if (active) setError(cause instanceof Error ? cause.message : "Cannot load scans."); })
+        .finally(() => { if (active) setLoading(false); });
+    } else {
+      Promise.all([getScan(scanId), getReport(scanId)])
+        .then(([detail, serverReport]) => {
+          if (active) setReport({ ...adaptScan(detail), generatedAt: serverReport.generatedAt });
+        })
+        .catch((cause: unknown) => { if (active) setError(cause instanceof Error ? cause.message : "Cannot load report."); })
+        .finally(() => { if (active) setLoading(false); });
     }
+    return () => { active = false; };
+  }, [scanId, navigate]);
 
-    const stored = localStorage.getItem("saad-latest-report");
-
-    if (!stored) return;
-
-    try {
-      setReport(JSON.parse(stored));
-    } catch {
-      setReport(null);
-    }
-  }, [location.state]);
-
-  function printReport() {
-    window.print();
+  function exportPDF() {
+    if (report) window.location.assign(reportUrl(report.id, "pdf"));
   }
 
   function exportJSON() {
-    if (!report) return;
-
-    const exportData = buildExportData(report);
-
-    downloadFile(
-      JSON.stringify(exportData, null, 2),
-      `${safeFilename(report.id)}_report.json`,
-      "application/json",
-    );
+    if (report) window.location.assign(`${reportUrl(report.id, "json")}&download=true`);
   }
 
   function exportCSV() {
-    if (!report) return;
-
-    const csv = buildCSV(report);
-
-    downloadFile(
-      csv,
-      `${safeFilename(report.id)}_candidates.csv`,
-      "text/csv;charset=utf-8",
-    );
+    if (report) window.location.assign(reportUrl(report.id, "csv"));
   }
+
+  if (loading) return <div role="status" className="p-8 text-sm text-muted-foreground">Loading saved report…</div>;
 
   if (!report) {
     return (
@@ -87,8 +62,9 @@ export function Reports() {
             No report available
           </p>
 
+          {error && <p role="alert" className="mt-2 text-xs text-red-300">{error}</p>}
           <p className="mt-2 text-xs text-muted-foreground">
-            Complete a sonar analysis first to generate a report.
+            Select a saved scan or complete a new analysis to generate a report.
           </p>
 
           <button
@@ -141,7 +117,7 @@ export function Reports() {
           </h1>
 
           <p className="mt-2 text-xs text-muted-foreground">
-            Structured and human-readable output from the latest SAAD
+            Structured and human-readable output from the saved SAAD
             sonar analysis.
           </p>
         </div>
@@ -168,11 +144,11 @@ export function Reports() {
 
           <button
             type="button"
-            onClick={printReport}
+            onClick={exportPDF}
             className="flex items-center gap-2 rounded-lg bg-cyan-400 px-4 py-2.5 text-xs font-semibold text-slate-950 transition-colors hover:bg-cyan-300"
           >
             <Download className="h-3.5 w-3.5" />
-            Print / Save as PDF
+            PDF
           </button>
         </div>
       </div>
@@ -267,8 +243,7 @@ export function Reports() {
               <strong className="text-foreground print:text-black">
                 {report.candidates.length}
               </strong>{" "}
-              candidate region
-              {report.candidates.length === 1 ? "" : "s"} within the
+              {report.candidates.length === 1 ? "candidate region" : "candidate regions"} within the
               analysed sonar frame. Candidates were ranked using
               detector confidence, reconstruction behaviour, flow-based
               novelty, and test-time consistency to support
@@ -327,7 +302,7 @@ export function Reports() {
                   <TableHeader>Class</TableHeader>
                   <TableHeader>Priority</TableHeader>
                   <TableHeader>YOLO</TableHeader>
-                  <TableHeader>Flow</TableHeader>
+                  <TableHeader>Flow NLL</TableHeader>
                   <TableHeader>TTA</TableHeader>
                   <TableHeader>Bounding Box</TableHeader>
                   <TableHeader>Evidence</TableHeader>
@@ -440,7 +415,7 @@ export function Reports() {
               The SAAD pipeline combines YOLO-based candidate detection
               with VAE reconstruction analysis, RealNVP flow-based
               novelty assessment, and test-time augmentation consistency.
-              These signals are combined by the evidence engine to
+              These signals are combined by the deployed live API evidence policy to
               prioritize candidates and communicate uncertainty for
               human review.
             </p>
@@ -474,165 +449,10 @@ export function Reports() {
 
       <p className="text-center text-[10px] text-muted-foreground print:hidden">
         JSON and CSV exports contain structured candidate-level results.
-        PDF output can be saved through the browser print dialog.
+        PDF output is generated from saved predictions and review decisions.
       </p>
     </div>
   );
-}
-
-/* ============================================================
-   Structured export
-   ============================================================ */
-
-function buildExportData(report: ReportData) {
-  return {
-    reportType: "SAAD Sonar Anomaly Analysis",
-    generatedAt:
-      report.generatedAt ?? new Date().toISOString(),
-
-    survey: {
-      id: report.id,
-      filename: report.image.filename,
-      imageWidth: report.image.width,
-      imageHeight: report.image.height,
-      geolocationAvailable: false,
-    },
-
-    summary: {
-      detections: report.summary.detections,
-      highPriority: report.summary.highPriority,
-      review: report.summary.review,
-      uncertain: report.summary.uncertain,
-      lowPriority: report.summary.lowPriority,
-    },
-
-    pipeline: [
-      "YOLO26s Detection",
-      "VAE Reconstruction Analysis",
-      "RealNVP Flow Novelty",
-      "TTA Consistency",
-      "Evidence Engine Prioritization",
-    ],
-
-    candidates: report.candidates.map((candidate) => ({
-      id: candidate.id,
-
-      classId: getClassId(candidate),
-      className: getClassName(candidate),
-
-      priority: candidate.priority,
-      priorityLevel: candidate.priorityLevel,
-      uncertainty: candidate.uncertainty,
-
-      scores: {
-        yoloConfidence: candidate.yoloConfidence,
-        flowNovelty: formatFlowNumber(candidate.flowScore),
-        ttaConsistency: candidate.ttaConsistency,
-        vaeScore: candidate.vaeScore,
-      },
-
-      boundingBox: {
-        x: candidate.bbox.x,
-        y: candidate.bbox.y,
-        width: candidate.bbox.width,
-        height: candidate.bbox.height,
-        coordinateSystem: "percentage",
-      },
-
-      evidenceProfile: candidate.evidenceProfile,
-      recommendation: candidate.recommendation,
-      reviewStatus: candidate.reviewStatus,
-    })),
-  };
-}
-
-function buildCSV(report: ReportData) {
-  const headers = [
-    "Candidate",
-    "Class ID",
-    "Class",
-    "Priority",
-    "Priority Level",
-    "Uncertainty",
-    "YOLO Confidence",
-    "Flow Novelty",
-    "TTA Consistency",
-    "VAE Score",
-    "BBox X",
-    "BBox Y",
-    "BBox Width",
-    "BBox Height",
-    "Evidence Profile",
-    "Recommendation",
-    "Review Status",
-  ];
-
-  const rows = report.candidates.map((candidate) => [
-    candidate.id,
-    getClassId(candidate),
-    getClassName(candidate),
-    candidate.priority ?? "",
-    candidate.priorityLevel,
-    candidate.uncertainty ?? "",
-    formatPercent(candidate.yoloConfidence),
-    formatFlow(candidate.flowScore),
-    formatPercent(candidate.ttaConsistency),
-    candidate.vaeScore ?? "",
-    candidate.bbox.x,
-    candidate.bbox.y,
-    candidate.bbox.width,
-    candidate.bbox.height,
-    candidate.evidenceProfile,
-    candidate.recommendation,
-    candidate.reviewStatus,
-  ]);
-
-  return [
-    headers,
-    ...rows,
-  ]
-    .map((row) =>
-      row.map((value) => csvEscape(String(value))).join(","),
-    )
-    .join("\n");
-}
-
-/* ============================================================
-   Helpers
-   ============================================================ */
-
-function downloadFile(
-  content: string,
-  filename: string,
-  mimeType: string,
-) {
-  const blob = new Blob(
-    [content],
-    { type: mimeType },
-  );
-
-  const url = URL.createObjectURL(blob);
-
-  const link = document.createElement("a");
-
-  link.href = url;
-  link.download = filename;
-
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-
-  URL.revokeObjectURL(url);
-}
-
-function csvEscape(value: string) {
-  return `"${value.replace(/"/g, '""')}"`;
-}
-
-function safeFilename(value: string) {
-  return value
-    .replace(/[^a-z0-9-_]/gi, "_")
-    .replace(/^_+|_+$/g, "") || "saad";
 }
 
 function formatPercent(
@@ -652,36 +472,11 @@ function formatPercent(
 function formatFlow(
   value: number | null | undefined,
 ) {
-  const normalized = formatFlowNumber(value);
-
-  if (normalized === null) {
+  if (value === null || value === undefined || !Number.isFinite(value)) {
     return "—";
   }
 
-  return `${(normalized * 100).toFixed(0)}%`;
-}
-
-function formatFlowNumber(
-  value: number | null | undefined,
-) {
-  if (
-    value === null ||
-    value === undefined ||
-    !Number.isFinite(value)
-  ) {
-    return null;
-  }
-
-  const P5 = 49.3122;
-  const P95 = 264.3907;
-
-  return Math.max(
-    0,
-    Math.min(
-      1,
-      (value - P5) / (P95 - P5),
-    ),
-  );
+  return value.toFixed(2);
 }
 
 function formatBBox(
@@ -690,27 +485,8 @@ function formatBBox(
   return `x:${bbox.x.toFixed(1)} y:${bbox.y.toFixed(1)} w:${bbox.width.toFixed(1)} h:${bbox.height.toFixed(1)}`;
 }
 
-/*
- * These two helpers intentionally tolerate the current Candidate type
- * not having className/classId yet.
- *
- * If the backend adapter is updated to pass those fields through,
- * the exports will automatically use them.
- */
 function getClassName(candidate: Candidate) {
-  const value = (candidate as Candidate & {
-    className?: string;
-  }).className;
-
-  return value ?? "Unknown";
-}
-
-function getClassId(candidate: Candidate) {
-  const value = (candidate as Candidate & {
-    classId?: number | string;
-  }).classId;
-
-  return value ?? "";
+  return candidate.className;
 }
 
 /* ============================================================
