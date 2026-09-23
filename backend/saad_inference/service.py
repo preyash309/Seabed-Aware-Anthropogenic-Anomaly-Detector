@@ -97,7 +97,10 @@ async def analyze(
     )
 
 
-    contents = await file.read()
+    contents = await file.read(settings.max_upload_bytes + 1)
+
+    if len(contents) > settings.max_upload_bytes:
+        raise HTTPException(status_code=413, detail="Uploaded image exceeds size limit.")
 
 
     if not contents:
@@ -117,15 +120,27 @@ async def analyze(
     # OPEN IMAGE
     # ========================================================
 
+    image = None
     try:
 
         image = Image.open(
             output_path
         )
 
+        if image.width * image.height > settings.max_image_pixels:
+            image.close()
+            output_path.unlink(missing_ok=True)
+            raise HTTPException(status_code=413, detail="Image dimensions exceed pixel limit.")
+
         image.load()
 
+    except HTTPException:
+        raise
+
     except Exception as exc:
+
+        if image is not None:
+            image.close()
 
         output_path.unlink(
             missing_ok=True
@@ -186,6 +201,8 @@ async def analyze(
             "YOLO ERROR:",
             repr(exc),
         )
+
+        output_path.unlink(missing_ok=True)
 
         raise HTTPException(
             status_code=500,

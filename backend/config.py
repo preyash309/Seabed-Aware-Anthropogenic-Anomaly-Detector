@@ -63,6 +63,9 @@ class Settings:
     dataset_dir: Path | None
     upload_dir: Path
     output_dir: Path
+    database_path: Path
+    max_upload_bytes: int
+    max_image_pixels: int
     api_public_url: str
     cors_origins: tuple[str, ...]
     device: str
@@ -165,13 +168,37 @@ class Settings:
         if not origins or any(not x.startswith(("http://", "https://")) for x in origins):
             raise ConfigurationError("SAAD_CORS_ORIGINS must contain HTTP origins")
 
+        try:
+            max_upload_bytes = int(env.get("SAAD_MAX_UPLOAD_BYTES", str(25 * 1024 * 1024)))
+            if max_upload_bytes <= 0:
+                raise ValueError()
+        except ValueError as exc:
+            raise ConfigurationError("SAAD_MAX_UPLOAD_BYTES must be a positive integer") from exc
+        try:
+            max_image_pixels = int(env.get("SAAD_MAX_IMAGE_PIXELS", "50000000"))
+            if max_image_pixels <= 0:
+                raise ValueError()
+        except ValueError as exc:
+            raise ConfigurationError("SAAD_MAX_IMAGE_PIXELS must be a positive integer") from exc
+        upload_dir = _path(env.get("SAAD_UPLOAD_DIR", "var/uploads"))
+        output_dir = _path(env.get("SAAD_OUTPUT_DIR", "var/results"))
+        database_path = _path(env.get("SAAD_DATABASE_PATH", "var/saad.sqlite3"))
+        for runtime_path in (upload_dir, output_dir, database_path):
+            if not runtime_path.resolve().is_relative_to(REPO_ROOT.resolve()):
+                raise ConfigurationError(
+                    f"Writable runtime path must stay inside the clean repository: {runtime_path}"
+                )
+
         return cls(
             manifest_path=manifest_path,
             calibration_path=calibration_path,
             artifact_paths=paths,
             dataset_dir=dataset_dir,
-            upload_dir=_path(env.get("SAAD_UPLOAD_DIR", "var/uploads")),
-            output_dir=_path(env.get("SAAD_OUTPUT_DIR", "var/results")),
+            upload_dir=upload_dir,
+            output_dir=output_dir,
+            database_path=database_path,
+            max_upload_bytes=max_upload_bytes,
+            max_image_pixels=max_image_pixels,
             api_public_url=env.get("SAAD_API_PUBLIC_URL", "http://127.0.0.1:8000").rstrip("/"),
             cors_origins=origins,
             device=device,
@@ -200,7 +227,7 @@ class Settings:
             raise ConfigurationError("Calibration SHA-256 mismatch")
 
     def prepare_runtime_dirs(self) -> None:
-        for path in (self.upload_dir, self.output_dir):
+        for path in (self.upload_dir, self.output_dir, self.database_path.parent):
             try:
                 path.mkdir(parents=True, exist_ok=True)
             except OSError as exc:
