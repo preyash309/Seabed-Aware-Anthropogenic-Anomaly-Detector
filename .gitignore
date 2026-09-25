@@ -29,6 +29,10 @@ coverage/
 *.onnx
 *.joblib
 *.pkl
+*.npy
+*.npz
+*.h5
+*.hdf5
 
 # Runtime state and generated research output
 var/
@@ -39,11 +43,21 @@ SIH_Results/
 *.db
 *.sqlite
 *.sqlite3
+*.db-*
+*.sqlite-*
+*.sqlite3-*
+*.db-journal
+*.sqlite-journal
+*.sqlite3-journal
 
 # Dataset mounts and raw/generated media
 datasets/**
 !datasets/.gitignore
 data/
+/Datasets/**
+/dataset/
+*.parquet
+*.feather
 *.png
 *.jpg
 *.jpeg

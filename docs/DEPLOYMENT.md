@@ -6,7 +6,7 @@ SAAD is verified as a **loopback** application on the audited RTX 4070 Windows m
 
 Keep the five tensors named in `config/model_manifest.json` outside Git. Copy `.env.example` to `.env` in the repository root and replace `SAAD_ARTIFACT_DIR` with the directory containing those relative asset paths. On the audited machine this is `E:/SIH/SIH_Results`, used read-only. The startup validator checks byte sizes, SHA-256 hashes and live calibration identity before loading models. `SAAD_UPLOAD_DIR`, `SAAD_OUTPUT_DIR` and `SAAD_DATABASE_PATH` must resolve inside the clean repository; their defaults are under ignored `var/`. Never use the original source, dataset or results tree as a writable runtime path.
 
-Use Python 3.11 and Node 24. The observed parity stack is Torch `2.11.0+cu128`, torchvision `0.26.0+cu128`, Ultralytics `8.4.140`, FastAPI `0.141.1`, NumPy `2.4.6`, Pillow `12.3.0` and reportlab `5.0.1`. The original Windows dependency snapshot is in `backend/requirements-original-windows-cu128.lock.txt`; it predates the added reportlab dependency. Downloading the exact 2.8 GB CUDA Torch wheel for a fresh environment failed during this migration, so these installation commands are a reproduction recipe, **not a fresh-install PASS claim**:
+Use Python 3.11 and Node 24. The observed parity stack is Torch `2.11.0+cu128`, torchvision `0.26.0+cu128`, Ultralytics `8.4.140`, FastAPI `0.141.1`, NumPy `2.4.6`, Pillow `12.3.0` and reportlab `5.0.1`. The original Windows dependency snapshot is in `backend/requirements-original-windows-cu128.lock.txt`; it predates the added reportlab dependency. The Stage 3 CUDA wheel download failed, but the publication review completed a **fresh from-wheel install** in a new environment under ignored `var/` on the audited machine. The exact wheel was obtained from the official PyTorch CUDA index and installed locally before the remaining lockfile packages; no package files were copied from the original environment. `pip check` and all 25 backend tests passed there. A different machine remains unverified.
 
 ```powershell
 py -3.11 -m venv .venv
@@ -17,7 +17,18 @@ Copy-Item .env.example .env
 # Edit SAAD_ARTIFACT_DIR in .env to your external frozen-asset root.
 ```
 
-The audited machine used a newly created `.venv` whose installed package files were copied read-only from the original environment after the Torch wheel download failed. Runtime imports resolve from the clean repository, and `pip check` passes. CPU and a second GPU have not passed numerical parity tests.
+If the installer repeatedly transfers the large Torch wheel, stage that exact wheel inside ignored `var/` and install it first:
+
+```powershell
+New-Item -ItemType Directory -Path var\wheels -Force | Out-Null
+.\.venv\Scripts\python.exe -m pip download --no-deps --index-url https://download.pytorch.org/whl/cu128 --dest var\wheels 'torch==2.11.0+cu128'
+.\.venv\Scripts\python.exe -m pip install --no-deps '.\var\wheels\torch-2.11.0+cu128-cp311-cp311-win_amd64.whl'
+.\.venv\Scripts\python.exe -m pip install --extra-index-url https://download.pytorch.org/whl/cu128 -r backend\requirements-original-windows-cu128.lock.txt
+.\.venv\Scripts\python.exe -m pip install reportlab==5.0.1
+.\.venv\Scripts\python.exe -m pip check
+```
+
+This was the successful publication-review path; `var/publication-venv` was created fresh and the temporary wheel was removed after installation. The older `.venv` still contains copied package files from the Stage 3 fallback, so use a newly created environment when checking reproducibility. CPU and a second GPU have not passed numerical parity tests.
 
 ## Preflight and start
 
