@@ -1,0 +1,219 @@
+[
+  {
+    "original": "Evidence/active_learning_retrain.py",
+    "archive": "research/original/Evidence/active_learning_retrain.py",
+    "bytes": 23133,
+    "sha256": "3b5108068687d22a8e94386d656d9ba8bbfacb9dde7e88bc5dde1facec318367",
+    "status": "historical-source"
+  },
+  {
+    "original": "Evidence/active_learning_saad.py",
+    "archive": "research/original/Evidence/active_learning_saad.py",
+    "bytes": 30816,
+    "sha256": "fcafb75e3233735e38e96f0f5f90806902cfeabad1f6ed039689b1fb9b2025e7",
+    "status": "historical-source"
+  },
+  {
+    "original": "Evidence/build_saad_evidence_engine_v2.py",
+    "archive": "research/original/Evidence/build_saad_evidence_engine_v2.py",
+    "bytes": 24424,
+    "sha256": "07903ee6177f88e3af3da647791bae8e5773ea808cc14721b9bf2d58864bdc99",
+    "status": "historical-source"
+  },
+  {
+    "original": "Evidence/build_saad_evidence_engine_v3.py",
+    "archive": "research/original/Evidence/build_saad_evidence_engine_v3.py",
+    "bytes": 49585,
+    "sha256": "bfb458a397daa14c41cca22c77b0e613861867cd4e7ddbb6e7d5fcb2611e42bc",
+    "status": "historical-source"
+  },
+  {
+    "original": "Evidence/evaluate_mar.py",
+    "archive": "research/original/Evidence/evaluate_mar.py",
+    "bytes": 29116,
+    "sha256": "1a00cbb26a7c322d572c74ece04a6fc053d7b07179c6fd5e171b1ac6b7218778",
+    "status": "historical-source"
+  },
+  {
+    "original": "Evidence/evaluate_yolo_tta.py",
+    "archive": "research/original/Evidence/evaluate_yolo_tta.py",
+    "bytes": 23347,
+    "sha256": "d5c9eb2b0dd71a482baa8a439ffd81584f987d41327bebe4448b3d5c82c00abf",
+    "status": "historical-source"
+  },
+  {
+    "original": "Evidence/train_mar.py",
+    "archive": "research/original/Evidence/train_mar.py",
+    "bytes": 24957,
+    "sha256": "9f187bc37cbde78a195bf6e76d4687b27c5bb83c9c805361774e6d2e2c13c203",
+    "status": "historical-source"
+  },
+  {
+    "original": "Experiment/build_saad_evidence_engine.py",
+    "archive": "research/original/Experiment/build_saad_evidence_engine.py",
+    "bytes": 40225,
+    "sha256": "a7ac93bddee07008f2fb562c9054b1477921db70802ca1e16bb79ff01b6be5cd",
+    "status": "historical-source"
+  },
+  {
+    "original": "Experiment/build_saad_evidence_ranking.py",
+    "archive": "research/original/Experiment/build_saad_evidence_ranking.py",
+    "bytes": 31333,
+    "sha256": "9abd58a9656beecebef38b73d71e248c5e360d11063fb6f6d0c2fc95f427a9b3",
+    "status": "historical-source"
+  },
+  {
+    "original": "Experiment/calibrate_saad_cv.py",
+    "archive": "research/original/Experiment/calibrate_saad_cv.py",
+    "bytes": 31430,
+    "sha256": "9e0726bfe0c34d7703b8589f9247017af7063984ebef4efec3d0748369d8d1d0",
+    "status": "historical-source"
+  },
+  {
+    "original": "Experiment/calibrate_saad_fusion.py",
+    "archive": "research/original/Experiment/calibrate_saad_fusion.py",
+    "bytes": 26712,
+    "sha256": "487e168f0c95d38982c5c8dd6d5eacc5ad97ed28061342a4ab346c664465c432",
+    "status": "historical-source"
+  },
+  {
+    "original": "Experiment/calibrate_saad_lodo.py",
+    "archive": "research/original/Experiment/calibrate_saad_lodo.py",
+    "bytes": 31467,
+    "sha256": "e41c70f515c6d4d7f75a7f9b1cbf147d5a23a2eec2229fa57e27fec927300a2e",
+    "status": "historical-source"
+  },
+  {
+    "original": "Experiment/evaluate_roi_fusion.py",
+    "archive": "research/original/Experiment/evaluate_roi_fusion.py",
+    "bytes": 69519,
+    "sha256": "d3566832ac6fefd90eae7d51b18ced210cf5e8b5415bd00fcd7aa733298ea857",
+    "status": "historical-source"
+  },
+  {
+    "original": "Experiment/evaluate_weighted_fusion.py",
+    "archive": "research/original/Experiment/evaluate_weighted_fusion.py",
+    "bytes": 49979,
+    "sha256": "7880e647674a87bd982a21e286cf4129e872025101c38ab7e018ca43d24d1aac",
+    "status": "historical-source"
+  },
+  {
+    "original": "Experiment/final_saad_evaluation.py",
+    "archive": "research/original/Experiment/final_saad_evaluation.py",
+    "bytes": 29899,
+    "sha256": "9478c0cc10ba9b962dc7e17d7d1e023b837a5686f45bab1ba2d33c9d470c4ac8",
+    "status": "historical-source"
+  },
+  {
+    "original": "VAE/evaluate_latent_flow.py",
+    "archive": "research/original/VAE/evaluate_latent_flow.py",
+    "bytes": 61606,
+    "sha256": "d89ffa83d6a9c35369ce8a2bc7daae86d979a681bb49eea1b6f5042967baafad",
+    "status": "historical-source"
+  },
+  {
+    "original": "VAE/evaluate_saad_fusion.py",
+    "archive": "research/original/VAE/evaluate_saad_fusion.py",
+    "bytes": 56148,
+    "sha256": "78f1e1b20d93068798ecb386c9551fd9777fd01051d85db0be559bfb6c53474b",
+    "status": "historical-source"
+  },
+  {
+    "original": "VAE/evaluate_shadow_plausibility.py",
+    "archive": "research/original/VAE/evaluate_shadow_plausibility.py",
+    "bytes": 31945,
+    "sha256": "7764420513a5aadd9f28f0b634534114ce56f24afd3a6068d6a27b5ff93bae04",
+    "status": "historical-source"
+  },
+  {
+    "original": "VAE/prepare_vae_dataset.py",
+    "archive": "research/original/VAE/prepare_vae_dataset.py",
+    "bytes": 13952,
+    "sha256": "f3eb41ad90d335fbc0f8c216baaf533f3d5cb8f1731e10f1ca145808ff195445",
+    "status": "historical-source"
+  },
+  {
+    "original": "VAE/train_latent_flow.py",
+    "archive": "research/original/VAE/train_latent_flow.py",
+    "bytes": 41417,
+    "sha256": "e5b45dd0763366731f1858beb87bb0261c02b8928c83852e711f4f239ea969e2",
+    "status": "historical-source"
+  },
+  {
+    "original": "VAE/train_vae_v2_ssim.py",
+    "archive": "research/original/VAE/train_vae_v2_ssim.py",
+    "bytes": 43074,
+    "sha256": "a0c15c755b5c59ab5884fea2df903d410c7c53c73939984ab84ddca00e58a706",
+    "status": "historical-source"
+  },
+  {
+    "original": "VAE/train_vae.py",
+    "archive": "research/original/VAE/train_vae.py",
+    "bytes": 33895,
+    "sha256": "76db4f20edea24aefb91e55bfdaf9c8ccb1f99b0261a1f7dd69d0e778f33b33b",
+    "status": "historical-source"
+  },
+  {
+    "original": "VAE/vae_anomaly.py",
+    "archive": "research/original/VAE/vae_anomaly.py",
+    "bytes": 58228,
+    "sha256": "911a54f8734c6dd9878b82c9432fd721c6a7dae6b10bb15026fe8679da9a6d06",
+    "status": "historical-source"
+  },
+  {
+    "original": "VAE/vae_test_checkpoint.py",
+    "archive": "research/original/VAE/vae_test_checkpoint.py",
+    "bytes": 3627,
+    "sha256": "dc1a255b5d676699542c35de77375a2aefca77d7704e5c3a18f2a0180f8d4a42",
+    "status": "historical-source"
+  },
+  {
+    "original": "YOLOv26/evaluate_saad_by_dataset.py",
+    "archive": "research/original/YOLOv26/evaluate_saad_by_dataset.py",
+    "bytes": 22949,
+    "sha256": "7513fe2abf04ad1ac8453dd2dd3ccf0a674ce500070432840f952d9658b6e24b",
+    "status": "historical-source"
+  },
+  {
+    "original": "YOLOv26/failure_analysis.py",
+    "archive": "research/original/YOLOv26/failure_analysis.py",
+    "bytes": 40926,
+    "sha256": "52c3bf3e4afa580b0b05461fdaefa04bb22a4115627d41904e7813db9875df97",
+    "status": "historical-source"
+  },
+  {
+    "original": "YOLOv26/fix_ghostvision.py",
+    "archive": "research/original/YOLOv26/fix_ghostvision.py",
+    "bytes": 15176,
+    "sha256": "5e05f3b26027cc76e4e01bb2fb767a1380f0d21178df36a9f4fb5f13b655587d",
+    "status": "historical-source"
+  },
+  {
+    "original": "YOLOv26/integrity_pass_saad.py",
+    "archive": "research/original/YOLOv26/integrity_pass_saad.py",
+    "bytes": 18443,
+    "sha256": "119b77063150efb25d7df4dbe33afb04922787c9c26f9b063650d2b8a1a5dffc",
+    "status": "historical-source"
+  },
+  {
+    "original": "YOLOv26/prepare_saad_dataset.py",
+    "archive": "research/original/YOLOv26/prepare_saad_dataset.py",
+    "bytes": 48500,
+    "sha256": "6bedb3def4a0c9bbe206942c5a9ce277d29804d31d0de1a8e6ad3d05074828ed",
+    "status": "historical-source"
+  },
+  {
+    "original": "YOLOv26/test.py",
+    "archive": "research/original/YOLOv26/test.py",
+    "bytes": 33893,
+    "sha256": "f0a59a3edd97dad765fac7294346636980e51635423ce62dd1753f79e6f6bc2f",
+    "status": "historical-source"
+  },
+  {
+    "original": "YOLOv26/train_yolo.py",
+    "archive": "research/original/YOLOv26/train_yolo.py",
+    "bytes": 12482,
+    "sha256": "4f052fba0763c73eb986b2abff155f778954ee419e8acd9552d9f0ac4b90ed81",
+    "status": "historical-source"
+  }
+]

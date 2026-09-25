@@ -13,8 +13,7 @@ import {
 
 import { UploadZone } from "../components/sonar/UploadZone";
 import { ScanPipeline } from "../components/sonar/ScanPipeline";
-
-const API_BASE_URL = "http://127.0.0.1:8000";
+import { analyzeImage, getHealth, type HealthStatus } from "../lib/api";
 
 export function NewScan() {
   const navigate = useNavigate();
@@ -25,10 +24,16 @@ export function NewScan() {
   const [analyzing, setAnalyzing] = useState(false);
   const [complete, setComplete] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [health, setHealth] = useState<HealthStatus | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    getHealth().then((value) => { if (active) setHealth(value); }).catch(() => {});
+    return () => { active = false; };
+  }, []);
 
   useEffect(() => {
     if (!file) {
-      setPreviewUrl(null);
       return;
     }
 
@@ -45,6 +50,7 @@ export function NewScan() {
 
   function handleFileSelected(selectedFile: File) {
     setFile(selectedFile);
+    setPreviewUrl(null);
     setAnalyzing(false);
     setComplete(false);
     setError(null);
@@ -66,60 +72,13 @@ export function NewScan() {
     setError(null);
 
     try {
-      const formData = new FormData();
-
-      formData.append("file", file);
-
-      const response = await fetch(
-        `${API_BASE_URL}/api/analyze`,
-        {
-          method: "POST",
-          body: formData,
-        },
-      );
-
-      if (!response.ok) {
-        let message = `Backend returned HTTP ${response.status}`;
-
-        try {
-          const errorData = await response.json();
-
-          if (errorData?.detail) {
-            message = errorData.detail;
-          }
-        } catch {
-          // Keep the default HTTP error message.
-        }
-
-        throw new Error(message);
-      }
-
-      const analysisResult = await response.json();
-
-      if (!analysisResult?.success) {
-        throw new Error(
-          "SAAD backend did not return a successful analysis.",
-        );
-      }
+      const analysisResult = await analyzeImage(file);
 
       setAnalyzing(false);
       setComplete(true);
 
-      /*
-       * Pass the REAL backend result directly to the
-       * analysis workspace.
-       *
-       * No mock result is created anymore.
-       */
       window.setTimeout(() => {
-        navigate(
-          `/scan/${analysisResult.surveyId}`,
-          {
-            state: {
-              analysisResult,
-            },
-          },
-        );
+        navigate(`/scan/${analysisResult.surveyId}`);
       }, 500);
     } catch (err) {
       console.error("SAAD analysis failed:", err);
@@ -225,8 +184,7 @@ export function NewScan() {
               </p>
 
               <p className="mt-3 font-mono text-[10px] text-muted-foreground/60">
-                Check that the SAAD FastAPI backend is running on
-                127.0.0.1:8000.
+                Check the configured SAAD API connection and try again.
               </p>
             </div>
           )}
@@ -265,13 +223,13 @@ export function NewScan() {
               <TelemetryCard
                 icon={Clock3}
                 label="Runtime"
-                value="GPU inference"
+                value={health?.device ?? "Checking device"}
               />
 
               <TelemetryCard
                 icon={Gauge}
                 label="Hardware"
-                value="RTX 4070"
+                value={health?.gpu ?? (health ? "CPU" : "Unknown")}
               />
             </div>
 

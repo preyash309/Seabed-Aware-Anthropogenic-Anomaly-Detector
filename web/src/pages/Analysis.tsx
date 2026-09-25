@@ -1,404 +1,95 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
-  ArrowLeft,
-  CheckCircle2,
-  Clock3,
-  Download,
-  MapPin,
-  Radio,
-  RotateCcw,
+  ArrowLeft, CheckCircle2, Clock3, Download, MapPin, Radio, RotateCcw,
 } from "lucide-react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import { CandidateList } from "../components/evidence/CandidateList";
 import { EvidencePanel } from "../components/evidence/EvidencePanel";
 import { SonarViewer } from "../components/sonar/SonarViewer";
-
-import type {
-  AnalysisResult,
-  BoundingBox,
-  Candidate,
-} from "../types/saad";
-
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL ?? "http://127.0.0.1:8000";
-
-function resolveImageUrl(url: string): string {
-  if (!url) return "";
-
-  if (url.startsWith("http://") || url.startsWith("https://")) {
-    return url;
-  }
-
-  return `${API_BASE_URL}${url.startsWith("/") ? url : `/${url}`}`;
-}
-
-/* ============================================================
-   Backend → Frontend adapter
-   ============================================================ */
-
-function adaptBackendResult(
-  backendResult: any,
-): AnalysisResult {
-
-  const backendCandidates =
-    Array.isArray(backendResult?.candidates)
-      ? backendResult.candidates
-      : [];
-
-  const candidates: Candidate[] =
-    backendCandidates.map(
-      (candidate: any, index: number) => {
-
-        return {
-          id:
-            candidate.id ??
-            `candidate-${String(index + 1).padStart(2, "0")}`,
-
-          bbox: {
-            x: Number(candidate.bbox?.x ?? 0),
-            y: Number(candidate.bbox?.y ?? 0),
-            width: Number(candidate.bbox?.width ?? 0),
-            height: Number(candidate.bbox?.height ?? 0),
-          },
-
-          yoloConfidence:
-            Number(candidate.yoloConfidence ?? 0),
-
-          vaeScore:
-            candidate.vaeScore === null ||
-            candidate.vaeScore === undefined
-              ? null
-              : Number(candidate.vaeScore),
-
-          flowScore:
-            candidate.flowScore === null ||
-            candidate.flowScore === undefined
-              ? null
-              : Number(candidate.flowScore),
-
-          ttaConsistency:
-            candidate.ttaConsistency === null ||
-            candidate.ttaConsistency === undefined
-              ? null
-              : Number(candidate.ttaConsistency),
-
-          priority:
-            candidate.priority === null ||
-            candidate.priority === undefined
-              ? null
-              : Number(candidate.priority),
-
-          uncertainty:
-            candidate.uncertainty === null ||
-            candidate.uncertainty === undefined
-              ? null
-              : Number(candidate.uncertainty),
-
-          priorityLevel:
-            candidate.priorityLevel ?? "LOW",
-
-          evidenceProfile:
-            candidate.evidenceProfile ??
-            "DETECTOR_ONLY",
-
-          recommendation:
-            candidate.recommendation ??
-            "Candidate requires human review.",
-
-          /*
-           * Backend currently returns "PENDING".
-           * Frontend Candidate type uses lowercase statuses.
-           */
-          reviewStatus:
-            String(
-              candidate.reviewStatus ?? "pending",
-            ).toLowerCase() as Candidate["reviewStatus"],
-        };
-      },
-    );
-
-  const backendSummary =
-    backendResult?.summary ?? {};
-
-  return {
-    id:
-      backendResult?.surveyId ??
-      "SAAD-UNKNOWN",
-
-    image: {
-      url: resolveImageUrl(
-          backendResult?.image?.url ?? "",
-        ),
-
-      width:
-        Number(
-          backendResult?.image?.width ?? 0,
-        ),
-
-      height:
-        Number(
-          backendResult?.image?.height ?? 0,
-        ),
-
-      filename:
-        backendResult?.filename ??
-        backendResult?.image?.filename ??
-        "sonar_frame",
-    },
-
-    summary: {
-      detections:
-        candidates.length,
-
-      highPriority:
-        Number(
-          backendSummary.highPriority ?? 0,
-        ),
-
-      review:
-        Number(
-          backendSummary.review ?? 0,
-        ),
-
-      /*
-       * Stage 1 has no uncertainty model yet.
-       * This will be populated when TTA / Evidence Engine
-       * is connected.
-       */
-      uncertain:
-        Number(
-          backendSummary.uncertain ??
-            candidates.filter(
-              (candidate) =>
-                Number(candidate.uncertainty ?? 0) >= 0.5,
-            ).length,
-        ),
-
-      lowPriority:
-        Number(
-          backendSummary.lowPriority ?? 0,
-        ),
-    },
-
-    candidates,
-  };
-}
-
-
-/* ============================================================
-   Analysis page
-   ============================================================ */
+import { adaptScan } from "../lib/adapt";
+import { getScan, reviewCandidate } from "../lib/api";
+import type { AnalysisResult, BoundingBox } from "../types/saad";
 
 export function Analysis() {
-
-  const location = useLocation();
+  const { id } = useParams();
   const navigate = useNavigate();
+  const [result, setResult] = useState<AnalysisResult | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [correctionMode, setCorrectionMode] = useState(false);
+  const [correctionBox, setCorrectionBox] = useState<BoundingBox | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const state = location.state as
-    | {
-        analysisResult?: any;
-      }
-    | undefined;
+  useEffect(() => {
+    if (!id) return;
+    let active = true;
+    getScan(id)
+      .then((detail) => {
+        if (!active) return;
+        const scan = adaptScan(detail);
+        setResult(scan);
+        setSelectedId(scan.candidates[0]?.id ?? null);
+        setError(null);
+      })
+      .catch((cause: unknown) => {
+        if (active) setError(cause instanceof Error ? cause.message : "Unable to load scan.");
+      })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, [id]);
 
+  const candidates = result?.candidates ?? [];
+  const selectedCandidate = candidates.find((candidate) => candidate.id === selectedId) ?? candidates[0];
 
-  /*
-   * The result now comes directly from FastAPI.
-   */
-  const result = state?.analysisResult
-    ? adaptBackendResult(
-        state.analysisResult,
-      )
-    : null;
-
-
-  const [selectedId, setSelectedId] =
-    useState<string | null>(
-      result?.candidates?.[0]?.id ?? null,
-    );
-
-
-  const [candidates, setCandidates] =
-    useState<Candidate[]>(
-      result?.candidates ?? [],
-    );
-
-
-  const [correctionMode, setCorrectionMode] =
-    useState(false);
-
-
-  const [correctionBox, setCorrectionBox] =
-    useState<BoundingBox | null>(null);
-
-
-  /* ----------------------------------------------------------
-     No result
-     ---------------------------------------------------------- */
-
-  if (!result) {
-    return (
-      <div className="flex min-h-[70vh] items-center justify-center">
-        <div className="text-center">
-
-          <p className="text-sm font-medium">
-            No analysis result found
-          </p>
-
-          <p className="mt-2 text-xs text-muted-foreground">
-            Start a new sonar scan to view analysis results.
-          </p>
-
-          <button
-            type="button"
-            onClick={() => navigate("/scan")}
-            className="mt-5 rounded-lg bg-cyan-400 px-4 py-2 text-xs font-semibold text-slate-950"
-          >
-            Start new scan
-          </button>
-
-        </div>
-      </div>
-    );
+  function selectCandidate(candidateId: string) {
+    if (!correctionMode) setSelectedId(candidateId);
   }
-
-
-  /* ----------------------------------------------------------
-     Selected candidate
-     ---------------------------------------------------------- */
-
-  const selectedCandidate =
-    candidates.find(
-      (candidate) =>
-        candidate.id === selectedId,
-    ) ?? candidates[0];
-
-
-  /* ----------------------------------------------------------
-     Candidate selection
-     ---------------------------------------------------------- */
-
-  function selectCandidate(id: string) {
-
-    if (correctionMode) return;
-
-    setSelectedId(id);
-  }
-
-
-  /* ----------------------------------------------------------
-     Correction
-     ---------------------------------------------------------- */
 
   function startCorrection() {
-
-    if (!selectedCandidate) return;
-
-    setCorrectionBox({
-      ...selectedCandidate.bbox,
-    });
-
+    if (!selectedCandidate || saving) return;
+    setCorrectionBox({ ...selectedCandidate.bbox });
     setCorrectionMode(true);
   }
 
-
   function cancelCorrection() {
-
     setCorrectionMode(false);
     setCorrectionBox(null);
   }
 
+  async function persistReview(action: "ACCEPT" | "REJECT" | "CORRECT", bbox?: BoundingBox) {
+    if (!result || !selectedCandidate || saving) return;
+    setSaving(true);
+    setError(null);
+    try {
+      await reviewCandidate(result.id, selectedCandidate.id, action, bbox);
+      const updated = adaptScan(await getScan(result.id));
+      setResult(updated);
+      setCorrectionMode(false);
+      setCorrectionBox(null);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Could not save review.");
+    } finally {
+      setSaving(false);
+    }
+  }
 
   function saveCorrection() {
-
-    if (
-      !selectedCandidate ||
-      !correctionBox
-    ) {
-      return;
-    }
-
-
-    setCandidates(
-      (current) =>
-        current.map(
-          (candidate) =>
-            candidate.id ===
-            selectedCandidate.id
-              ? {
-                  ...candidate,
-
-                  bbox: {
-                    ...correctionBox,
-                  },
-
-                  reviewStatus:
-                    "corrected",
-                }
-              : candidate,
-        ),
-    );
-
-
-    setCorrectionMode(false);
-    setCorrectionBox(null);
+    if (correctionBox) void persistReview("CORRECT", correctionBox);
   }
+  function acceptCandidate() { void persistReview("ACCEPT"); }
+  function rejectCandidate() { void persistReview("REJECT"); }
 
+  if (loading) return <div role="status" className="p-8 text-sm text-muted-foreground">Loading saved scan…</div>;
+  if (!result) return (
+    <div className="space-y-4 p-8">
+      <p className="text-sm text-red-300">{error ?? "Scan unavailable."}</p>
+      <button type="button" className="text-xs text-cyan-300" onClick={() => navigate("/scan")}>Start new scan</button>
+    </div>
+  );
 
-  /* ----------------------------------------------------------
-     Accept / Reject
-     ---------------------------------------------------------- */
-
-  function updateReviewStatus(
-    status: Candidate["reviewStatus"],
-  ) {
-
-    if (!selectedCandidate) return;
-
-
-    setCandidates(
-      (current) =>
-        current.map(
-          (candidate) =>
-            candidate.id ===
-            selectedCandidate.id
-              ? {
-                  ...candidate,
-                  reviewStatus: status,
-                }
-              : candidate,
-        ),
-    );
-  }
-
-
-  function acceptCandidate() {
-
-    updateReviewStatus(
-      "accepted",
-    );
-  }
-
-
-  function rejectCandidate() {
-
-    updateReviewStatus(
-      "rejected",
-    );
-  }
-
-
-  /* ----------------------------------------------------------
-     Review count
-     ---------------------------------------------------------- */
-
-  const reviewedCount =
-    candidates.filter(
-      (candidate) =>
-        candidate.reviewStatus !==
-        "pending",
-    ).length;
-
+  const reviewedCount = candidates.filter((candidate) => candidate.reviewStatus !== "pending").length;
 
   /* ----------------------------------------------------------
      Render
@@ -463,7 +154,7 @@ export function Analysis() {
             <span className="flex items-center gap-1">
               <Clock3 className="h-3 w-3" />
 
-              GPU inference
+              {result.processingDevice} inference
             </span>
 
           </div>
@@ -489,24 +180,7 @@ export function Analysis() {
 
           <button
             type="button"
-            onClick={() => {
-              const reportData = {
-                ...result,
-                candidates,
-                generatedAt: new Date().toISOString(),
-              };
-
-              localStorage.setItem(
-                "saad-latest-report",
-                JSON.stringify(reportData),
-              );
-
-              navigate("/reports", {
-                state: {
-                  reportData,
-                },
-              });
-            }}
+            onClick={() => navigate(`/reports?scanId=${encodeURIComponent(result.id)}`)}
             className="flex items-center gap-2 rounded-lg border border-cyan-400/20 bg-cyan-400/5 px-3 py-2 text-xs text-cyan-300 transition-colors hover:bg-cyan-400/10"
           >
             <Download className="h-3.5 w-3.5" />
@@ -516,6 +190,14 @@ export function Analysis() {
         </div>
 
       </div>
+
+      {result.analysisStatus === "partial" && (
+        <p role="status" className="rounded-xl border border-amber-400/30 bg-amber-400/5 p-3 text-xs text-amber-200">
+          Partial inference: one or more VAE, flow or TTA scores are unavailable. Review the missing evidence before acting.
+        </p>
+      )}
+      {error && <p role="alert" className="rounded-xl border border-red-400/30 p-3 text-xs text-red-300">{error}</p>}
+      {saving && <p role="status" className="text-xs text-muted-foreground">Saving review…</p>}
 
 
       {/* ======================================================
@@ -596,6 +278,7 @@ export function Analysis() {
             onAccept={acceptCandidate}
             onReject={rejectCandidate}
             onCorrect={startCorrection}
+            disabled={saving}
           />
 
         ) : (

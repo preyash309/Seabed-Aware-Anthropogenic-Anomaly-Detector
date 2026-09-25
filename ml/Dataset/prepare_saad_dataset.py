@@ -7,10 +7,11 @@ Purpose:
     integrity guarantees before YOLO training.
 
 IMPORTANT:
-    - This script REPLACES the existing SAAD_baseline directory.
+    - The clean-repository copy refuses an existing output directory.
+    - A build requires SAAD_ALLOW_DATASET_BUILD=YES and writes only under
+      var/research_datasets in the clean repository.
     - It does NOT modify the original source datasets.
-    - Close anything that may have files open inside SAAD_baseline first.
-    - Review CONFIG before running.
+    - Use --dry-run to inspect resolved paths without writing.
 
 Pipeline:
     GhostVision      -> anthropogenic + normal
@@ -42,8 +43,9 @@ import json
 import math
 import random
 import re
-import shutil
 import sys
+
+from safety import configured_path, dry_run, require_new_output, SAFE_OUTPUT_ROOT
 
 import numpy as np
 from PIL import Image
@@ -54,19 +56,16 @@ from tqdm import tqdm
 # CONFIG
 # ============================================================
 
-ROOT = Path(r"E:\SIH\Datasets")
+ROOT = configured_path("SAAD_SOURCE_DATASET_ROOT", Path(r"E:\SIH\Datasets"))
 
-OUTPUT = ROOT / "SAAD_baseline"
+OUTPUT = configured_path("SAAD_RESEARCH_OUTPUT_DIR", SAFE_OUTPUT_ROOT / "SAAD_baseline")
 
 GHOST_ROOT = ROOT / "sss-crab-pot-detection-ds"
 AI4_ROOT = ROOT / "AI4Shipwrecks"
 SUBPIPE_ROOT = ROOT / "SubPipeMini2"
 MARINE_ROOT = ROOT / "Marine_PULSE"
 
-# Rebuild from scratch.
-# Set to False if you want the script to STOP instead of replacing
-# an existing SAAD_baseline.
-REBUILD_EXISTING = True
+# The clean-repository wrapper refuses existing output directories.
 
 SEED = 42
 random.seed(SEED)
@@ -95,20 +94,16 @@ SUBPIPE_TEST_FRACTION = 0.10
 # ============================================================
 
 def safe_reset_output():
-    if OUTPUT.exists():
-        if not REBUILD_EXISTING:
-            raise RuntimeError(
-                f"{OUTPUT} already exists. "
-                f"Set REBUILD_EXISTING=True to rebuild it."
-            )
-
-        print("\nRemoving previous SAAD_baseline...")
-        shutil.rmtree(OUTPUT)
+    require_new_output(ROOT, OUTPUT)
 
     for split in ["train", "val", "test"]:
         (OUTPUT / "images" / split).mkdir(parents=True, exist_ok=True)
         (OUTPUT / "labels" / split).mkdir(parents=True, exist_ok=True)
 
+
+if "--dry-run" in sys.argv:
+    dry_run(ROOT, OUTPUT)
+    sys.exit(0)
 
 safe_reset_output()
 

@@ -6,8 +6,19 @@ import {
   Settings2,
   Wifi,
 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { getHealth, type HealthStatus } from "../../lib/api";
 
 export function Topbar() {
+  const [health, setHealth] = useState<HealthStatus | null>(null);
+  const [apiState, setApiState] = useState("API CHECKING");
+  useEffect(() => {
+    let active = true;
+    getHealth()
+      .then((value) => { if (active) { setHealth(value); setApiState("API ONLINE"); } })
+      .catch(() => { if (active) setApiState("API OFFLINE"); });
+    return () => { active = false; };
+  }, []);
   return (
     <header className="flex h-16 shrink-0 items-center justify-between border-b border-border/70 bg-background/80 px-5 backdrop-blur-xl lg:px-7">
       <div className="flex items-center gap-3">
@@ -29,14 +40,14 @@ export function Topbar() {
         <div className="hidden items-center gap-2 rounded-md border border-border/60 bg-card/50 px-3 py-2 sm:flex">
           <Cpu className="h-3.5 w-3.5 text-cyan-400" />
           <span className="font-mono text-[10px] text-muted-foreground">
-            GPU READY
+            {health ? (health.cuda_available ? "CUDA AVAILABLE" : "CPU DEVICE") : "DEVICE UNKNOWN"}
           </span>
         </div>
 
         <div className="hidden items-center gap-2 rounded-md border border-border/60 bg-card/50 px-3 py-2 sm:flex">
           <Wifi className="h-3.5 w-3.5 text-emerald-400" />
           <span className="font-mono text-[10px] text-muted-foreground">
-            LOCAL
+            {apiState}
           </span>
         </div>
 
