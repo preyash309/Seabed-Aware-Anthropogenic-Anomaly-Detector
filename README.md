@@ -56,6 +56,9 @@ config/model_manifest.json identifies the five runtime tensors by size and SHA-2
 
 The offline v3 configuration remains externally at E:/SIH/SIH_Results/saad_evidence_engine_v3/engine_config.json and its builder at E:/SIH/Evidence/build_saad_evidence_engine_v3.py. The final offline evaluation also explored YOLO_FLOW_MEAN. Neither replaces the deployed API. Scores are review-priority scales, not calibrated probabilities. BASELINE_VERIFICATION.md records the numerical baseline.
 
+## GitHub Actions CI
+
+Pull requests to `main` and pushes to `main` run separate backend, frontend and repository-hygiene jobs. The hosted backend runs 13 asset-independent tests on CPU and validates Python dependencies; it does not run the 12 tests that require private frozen assets or fixed sonar images. See [docs/CI.md](docs/CI.md) for the exact 25-test split, commands and local GPU regression procedure. The audited Windows RTX 4070 golden result remains a separate local verification.
 ## Regression checks
 
 After configuring the external artifact root, run:

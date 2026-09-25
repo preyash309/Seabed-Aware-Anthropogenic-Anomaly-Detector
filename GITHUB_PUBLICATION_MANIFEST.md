@@ -1,13 +1,14 @@
 # GitHub publication manifest
 
-This is the proposed pull-request file set from `refactor/saad-production`. It enumerates the Git index plus intended new publication documents. It does not imply that a push or pull request has occurred.
+This lists the files proposed for PR #1 from `refactor/saad-production`. It enumerates the branch file set including this CI change.
 
-Included: **168 files, 2,591,038 bytes excluding this self-listing file**. Area counts: audit 2, backend 23, config 2, datasets 1, docs 2, ml 30, research 38, root 18, tests 8, web 44.
+Included: **172 files, 2,604,226 bytes excluding this self-listing file**. Area counts: .github 1, audit 2, backend 23, config 2, datasets 1, docs 3, ml 30, research 38, root 18, scripts 1, tests 9, web 44.
 
 ## Included paths
 
 ```text
 .env.example
+.github/workflows/ci.yml
 .gitignore
 ARCHITECTURE.md
 ASSET_MANIFEST.md
@@ -53,6 +54,7 @@ backend/vae_inference.py
 config/live_api_v1.json
 config/model_manifest.json
 datasets/.gitignore
+docs/CI.md
 docs/DEPLOYMENT.md
 docs/PR_BODY.md
 ml/Dataset/.gitignore
@@ -123,6 +125,8 @@ research/verify_asset_ledger.py
 research/verify_fixtures.py
 research/verify_original_inventory.py
 research/verify_provenance.py
+scripts/check_repository_hygiene.py
+tests/run_ci_backend.py
 tests/test_stage1_config.py
 tests/test_stage1_golden.py
 tests/test_stage2_checkpoints.py

@@ -12,6 +12,9 @@
 - `npm ci`, frontend type checking, linting and production build passed. A built-browser GhostVision upload returned seven candidates; an accepted review survived reload and appeared in the report. Loopback HTTP readiness, scan/review-event and report retrieval passed.
 - Publication hygiene and the fresh isolated Python installation result are documented in `PUBLICATION_REVIEW.md`.
 
+## GitHub Actions
+
+PR and main-branch CI run three independent jobs: 13 asset-independent backend tests plus `pip check` on CPU, frontend `npm ci`/typecheck/lint/build, and tracked-file/history hygiene. The 12 backend tests requiring private tensors, fixed sonar images or model-loaded routes remain local-only. GitHub Actions has no model weights, dataset or GPU golden-parity claim; [docs/CI.md](docs/CI.md) lists the exact split. The Windows RTX 4070 verification above is a separate completed local result.
 ## Installation and limits
 
 The repository does **not** include the five model/normalization tensors, live calibration, datasets, test images, runtime SQLite files or generated results. Supply authorized external assets matching `config/model_manifest.json`; see `README.md` and `docs/DEPLOYMENT.md` for the pinned Windows/CUDA setup and local launch commands.
