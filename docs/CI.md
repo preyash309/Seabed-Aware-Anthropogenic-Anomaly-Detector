@@ -31,8 +31,8 @@ The hosted backend job uses `SAAD_ARTIFACT_DIR` pointing at the checkout only to
 The already audited Windows RTX 4070 suite uses the official CUDA 12.8 wheel, authorized five external tensors, live calibration and the three hashed fixed sonar images. Configure `SAAD_ARTIFACT_DIR`, `YOLO_AUTOINSTALL=False` and a clean-repository `YOLO_CONFIG_DIR`, then run:
 
 ```powershell
-.\var\publication-venv\Scripts\python.exe -B research/verify_fixtures.py
-.\var\publication-venv\Scripts\python.exe -B -m unittest discover -s tests -p 'test_stage*.py' -q
+.\.venv\Scripts\python.exe -B research/verify_fixtures.py
+.\.venv\Scripts\python.exe -B -m unittest discover -s tests -p 'test_stage*.py' -q
 ```
 
 The full local suite previously passed 25/25 with zero maximum reported golden deltas on the audited machine. GitHub CI does not rerun, store or attest to that GPU result. Keep all external assets outside Git and Actions. The hosted CPU wheel is chosen for test imports; no CPU numerical parity has been established.
