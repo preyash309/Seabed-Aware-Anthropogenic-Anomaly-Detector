@@ -1,0 +1,2 @@
+# Calibration is validated by raw SHA-256; retain the manifest-pinned LF bytes.
+config/live_api_v1.json text eol=lf

@@ -1,74 +1,80 @@
 # SAAD
 
-SAAD combines the original YOLO26s detector, ConvVAE, RealNVP latent flow, three-variant TTA and the deployed live API evidence policy. Stages 1–6 have been validated for local loopback use: frozen external assets are checked before loading, modular inference preserves the golden fixtures, the API stores scans and human reviews durably, the React application uses those saved records, and original research sources are archived with hash provenance. A fresh isolated Python wheel installation passed on the audited Windows machine during publication review. Installation on another machine and external deployment remain unverified; see [RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md).
+**SAAD (Seabed-Aware Anthropogenic Anomaly Detector)** helps a reviewer inspect possible objects and anomalies in side-scan sonar images. It combines a frozen YOLO26s detector, ConvVAE reconstruction, RealNVP latent novelty and three test-time augmentations into a candidate evidence profile. A human can accept, reject or correct each candidate; scans, decisions and reports persist locally.
 
-## Application and architecture
+The application has been verified for **local loopback use** on one Windows RTX 4070 Laptop GPU machine. The repository contains no model checkpoints or sonar datasets. It is not an authenticated network service, and its evidence scores are review priorities rather than probabilities. See [Limitations](docs/LIMITATIONS.md).
 
-The React/Vite client uploads sonar images to FastAPI. The backend validates external frozen assets at startup, detects candidates, computes VAE/flow/TTA evidence, applies `saad-live-api-v1`, and returns the original `/api/analyze` response. SQLite stores scans, immutable model predictions, separate human reviews, and review events. The browser supports candidate inspection, accept/reject/correct, saved history and review queue, and JSON/CSV/PDF reports. `ARCHITECTURE.md` documents the module dependency flow; `research/STATUS.md` identifies historical experiments that are outside the production import path.
+## How it works
 
-Only local loopback operation on the audited Windows RTX 4070 machine has passed end-to-end validation. The API has no authentication. Do not expose it on a network interface.
+```text
+Sonar image -> YOLO26s candidates -> grayscale context crops
+            -> ConvVAE reconstruction + RealNVP latent NLL
+            -> brightness / contrast / seeded-noise TTA
+            -> saad-live-api-v1 evidence and review priority
+            -> saved scan -> human review -> JSON / CSV / PDF report
+```
 
-## Windows setup
+The backend preserves the original `/api/analyze` response. SQLite stores immutable model predictions separately from corrected boxes, current review decisions and an append-only event trail. The React client supports upload, candidate inspection, saved history, a pending review queue, direct scan navigation and reports. [Architecture](docs/ARCHITECTURE.md) describes modules, routes and the policy formulas.
 
-Prerequisites: Windows, Python 3.11, Node 24/npm 11, a compatible NVIDIA CUDA device for the audited GPU path, adequate disk space for the large CUDA wheels, and access to the frozen external assets. The observed stack uses Torch 2.11.0+cu128 and Ultralytics 8.4.140. `backend/requirements-original-windows-cu128.lock.txt` records the original Python environment; `reportlab==5.0.1` is additionally required for PDF reports. `backend/requirements.txt` lists direct requirements but is not the parity installation recipe. See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for operating details and [PUBLICATION_REVIEW.md](PUBLICATION_REVIEW.md) for the current fresh-install result.
+**Policy distinction:** `saad-live-api-v1` is the deployed default. The archived offline Evidence Engine v3 shares some normalization values but has different priority, uncertainty and action rules and does not use TTA. It is research provenance, not a selectable live policy. No model algorithm or evidence policy was changed during repository cleanup.
 
-1. Create a new virtual environment in this clean repository and install the pinned Windows/CUDA stack:
+## Quick start on the audited Windows setup
 
-    py -3.11 -m venv .venv
-    .\.venv\Scripts\python.exe -m pip install --extra-index-url https://download.pytorch.org/whl/cu128 -r backend\requirements-original-windows-cu128.lock.txt
-    .\.venv\Scripts\python.exe -m pip install reportlab==5.0.1
-    .\.venv\Scripts\python.exe -m pip check
+Prerequisites are Python 3.11, Node 24/npm 11, the official CUDA 12.8 PyTorch wheel stack and authorized copies of the five original frozen tensors. A new isolated Python environment was installed and passed `pip check` on the audited machine. The precise package snapshot is `backend/requirements-original-windows-cu128.lock.txt`; install `reportlab==5.0.1` in addition for PDF exports.
 
-   The clean install passed on the audited machine using the exact CUDA wheel and pins. Pip twice requested the 2.75 GB Torch wheel during the first attempt; the completed official wheel was installed locally into the new environment, then the lockfile installation completed. `PUBLICATION_REVIEW.md` records the commands and test result. Do not substitute a different Torch build and claim golden parity.
-2. Supply the five original tensors and `live_api_v1.json` calibration from an authorized copy of the original SAAD results, or another authorized source with the **same hashes** in `config/model_manifest.json`. No checkpoint, calibration download, dataset bundle, or redistribution license is provided by this repository. Place them outside Git in the manifest's relative directory layout. The three original test images are likewise external; use an authorized prepared dataset for golden tests. Copy `.env.example` to a local `.env` and set `SAAD_ARTIFACT_DIR` to that external asset root. On the audited machine, `E:/SIH/SIH_Results` is the read-only source.
+From the repository root in PowerShell:
 
-    Copy-Item .env.example .env
-3. From the repository root, create the ignored Ultralytics settings directory, disable automatic package installation, then run the preflight and API:
+```powershell
+py -3.11 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install --extra-index-url https://download.pytorch.org/whl/cu128 -r backend\requirements-original-windows-cu128.lock.txt
+.\.venv\Scripts\python.exe -m pip install reportlab==5.0.1
+Copy-Item .env.example .env
+# Set SAAD_ARTIFACT_DIR in .env to an authorized external asset root.
+New-Item -ItemType Directory -Path var\ultralytics -Force | Out-Null
+$env:YOLO_AUTOINSTALL='False'
+$env:YOLO_CONFIG_DIR=(Resolve-Path var\ultralytics).Path
+.\.venv\Scripts\python.exe -B -m uvicorn main:app --app-dir backend --host 127.0.0.1 --port 8000
+```
 
-    New-Item -ItemType Directory -Path var\ultralytics -Force
-    $env:YOLO_AUTOINSTALL='False'
-    $env:YOLO_CONFIG_DIR=(Resolve-Path var\ultralytics).Path
-    .\.venv\Scripts\python.exe -B research/verify_fixtures.py
-    .\.venv\Scripts\python.exe -B -m uvicorn main:app --app-dir backend --host 127.0.0.1 --port 8000
+In another PowerShell session:
 
-The API uses var/uploads, var/results and var/saad.sqlite3 under the clean repository by default. These paths are ignored by Git and writable runtime paths are validated to remain inside the clean repository. Startup fails before model loading if a checkpoint is missing or fails size/SHA-256 validation. Set `YOLO_AUTOINSTALL=False` and `YOLO_CONFIG_DIR` to a directory under `var/` before starting the API; create that directory first. This prevents Ultralytics from installing packages or writing settings outside the clean repository.
+```powershell
+cd web
+npm ci
+npm run dev -- --host 127.0.0.1
+```
 
-To run the frontend locally:
+Open the local Vite URL. The backend is bound to `127.0.0.1:8000`; the browser defaults to that API address. [Setup](docs/SETUP.md) covers the complete preflight, CORS, production preview and troubleshooting steps. Do not expose the API outside loopback.
 
-    cd web
-    npm ci
-    npm run dev
+## External assets and configuration
 
-The frontend uses `VITE_API_BASE_URL` (default `http://127.0.0.1:8000`) for all API calls. Copy `web/.env.example` to ignored `web/.env.local` if the backend runs at a different origin. The API CORS origins must include the frontend origin. Reviews and corrected boxes are saved in SQLite, so scan and report URLs work after reload and direct navigation. JSON, CSV and PDF report attachments come from the backend. Keep the API on loopback until authentication and access control are designed.
+`config/model_manifest.json` pins the five original tensors by relative path, byte size and SHA-256; startup validates them and the `saad-live-api-v1` calibration before loading. Supply authorized assets outside Git and set `SAAD_ARTIFACT_DIR` in ignored `.env`, or use individual exact-matching overrides. The committed `config/live_api_v1.json` contains the live calibration. Optional dataset and runtime settings are listed in `.env.example`; uploads, outputs and SQLite default to ignored `var/`. The three fixed sonar images used by the golden suite are also external. [ASSET_MANIFEST.md](ASSET_MANIFEST.md) records source hashes and dataset caveats. There is no bundled checkpoint, dataset, screenshot or public asset download.
 
-## Configuration
+## Verification
 
-backend/config.py loads local .env without overriding process environment variables. Relative paths resolve from the repository root. SAAD_ARTIFACT_DIR supplies the external root. SAAD_YOLO_WEIGHTS, SAAD_VAE_WEIGHTS, SAAD_FLOW_WEIGHTS, SAAD_LATENT_MEAN and SAAD_LATENT_STD can override individual paths only if their bytes match the selected manifest. SAAD_MODEL_MANIFEST selects a model manifest; SAAD_CALIBRATION_FILE selects a live-policy calibration with a matching manifest hash. SAAD_DATASET_DIR is an optional read-only prepared dataset. SAAD_DEVICE is auto, cpu or an available cuda:N. SAAD_UPLOAD_DIR, SAAD_OUTPUT_DIR, SAAD_DATABASE_PATH, SAAD_MAX_UPLOAD_BYTES, SAAD_MAX_IMAGE_PIXELS, SAAD_API_PUBLIC_URL and SAAD_CORS_ORIGINS configure runtime storage, upload bounds and API origins. `VITE_API_BASE_URL` configures the React API client.
+On the audited Windows RTX 4070 machine, the fresh-install backend suite passed **25/25** with every reported golden maximum numerical difference **0.0**: seven GhostVision API candidates and three fixed domain stage cases with 14/7/6 candidates. Real loopback HTTP and browser runs exercised uploads, persistent reviews/corrections, history, queue and JSON/CSV/PDF downloads. These are migration and integration checks, not accuracy benchmarks. The original captured values and tolerances remain in [BASELINE_VERIFICATION.md](BASELINE_VERIFICATION.md); methodology and scope are in [Evaluation](docs/EVALUATION.md).
 
-config/model_manifest.json identifies the five runtime tensors by size and SHA-256. config/live_api_v1.json contains the exact deployed percentile and weight values. The original loaders, crop, detector, VAE, flow, TTA and evidence calculations remain intact. `backend/main.py:app` remains the FastAPI entry point. `backend/routes.py` owns route wiring; `backend/saad_inference/registry.py` loads the model set once at startup; `service.py` coordinates inference; `response.py` preserves candidate sorting, summary and response fields. See [ARCHITECTURE.md](ARCHITECTURE.md) for the dependency map.
+GitHub Actions runs **13 asset-independent** backend tests, `pip check`, frontend `npm ci`/typecheck/lint/build and repository hygiene. The other **12** backend tests need external tensors, fixed images or model-loaded routes and run locally. [CI](docs/CI.md) lists the exact split. With the authorized external assets and a stopped API, run the full local suite from the repository root:
 
-## Distinct evidence policies
+```powershell
+.\.venv\Scripts\python.exe -B research/verify_fixtures.py
+.\.venv\Scripts\python.exe -B -m unittest discover -s tests -p 'test_stage*.py' -q
+```
 
-| Policy | Status | Shared inputs | Distinguishing behavior |
-| --- | --- | --- | --- |
-| saad-live-api-v1 | Deployed default and golden baseline | Validation-normal P5/P95 and 0.50/0.20/0.30 YOLO/VAE/flow weights | Priority is 0.80 base + 0.10 corroboration + 0.10 TTA; live disagreement/TTA/agreement uncertainty and live action/profile rules. |
-| saad-offline-evidence-v3 | Research only; not selectable for deployment | Same normal-reference values and primary weights | Different priority bonuses and penalty, different ambiguity/disagreement uncertainty and action/profile rules; no TTA. |
+## Repository map
 
-The offline v3 configuration remains externally at E:/SIH/SIH_Results/saad_evidence_engine_v3/engine_config.json and its builder at E:/SIH/Evidence/build_saad_evidence_engine_v3.py. The final offline evaluation also explored YOLO_FLOW_MEAN. Neither replaces the deployed API. Scores are review-priority scales, not calibrated probabilities. BASELINE_VERIFICATION.md records the numerical baseline.
+| Path | Purpose |
+| --- | --- |
+| `backend/`, `config/` | FastAPI, frozen inference, model/calibration validation, SQLite and reports. |
+| `web/` | React/Vite browser client. |
+| `tests/`, `audit/` | Unit/API tests and small numeric/hash regression fixtures; no image bytes. |
+| `ml/` | Historical offline research selection and guarded dataset builder dry runs. |
+| `research/original/`, `research/source_manifest.json` | 31 original source scripts and SHA-256 provenance. |
+| `research/verify_*.py`, `scripts/` | Asset, source and repository hygiene checks. |
+| `docs/` | Permanent architecture, setup, evaluation, CI, research and limitations guides. |
 
-## GitHub Actions CI
+The dated [source inventory](SOURCE_INVENTORY.md), [external asset ledger](ASSET_MANIFEST.md) and [original baseline](BASELINE_VERIFICATION.md) remain at the repository root because verification tools and the model manifest refer to them. [Research](docs/RESEARCH.md) explains the 31-script archive, supported offline evaluation, guarded builders and historical workflows.
 
-Pull requests to `main` and pushes to `main` run separate backend, frontend and repository-hygiene jobs. The hosted backend runs 13 asset-independent tests on CPU and validates Python dependencies; it does not run the 12 tests that require private frozen assets or fixed sonar images. See [docs/CI.md](docs/CI.md) for the exact 25-test split, commands and local GPU regression procedure. The audited Windows RTX 4070 golden result remains a separate local verification.
-## Regression checks
+## Provenance and acknowledgements
 
-After configuring the external artifact root, run:
-
-    python -B -m unittest discover -s tests -p "test_stage*.py" -v
-
-The golden test checks the original API candidate response on the fixed GhostVision image and all detector/crop/VAE/flow/TTA/evidence fields on one image from each prepared test domain. Image SHA-256 is checked before inference. `SAAD_GOLDEN_IMAGE_DIR` can point to the same three basenames on another machine. These images are not bundled. Stop the model-loaded API before running the GPU suite on the audited 8 GB device. Temporary request uploads stay in configured clean-repository storage and are removed after their hashes are verified.
-
-SOURCE_INVENTORY.md, ASSET_MANIFEST.md, MIGRATION_MAP.md and REFACTOR_PLAN.md contain the audit. STAGE1_VERIFICATION.md through STAGE6_VERIFICATION.md record test results and limits. Research status and reproducible commands are in [research/STATUS.md](research/STATUS.md); the 31-script source hash ledger is `research/source_manifest.json`. The local API exposes `GET /api/ready`, `/api/scans`, `/api/review-queue`, scan detail, review-event and JSON/CSV/PDF report retrieval, and `PUT /api/scans/{scan_id}/candidates/{candidate_id}/review` with `ACCEPT`, `REJECT` or `CORRECT`. The original `POST /api/analyze` response is unchanged and persists its result. Run `npm run typecheck`, `npm run lint` and `npm run build` in `web/` for frontend checks.
-
-## Release limits
-
-The public repository contains no model weights, calibration file, dataset image or screenshot. The 31-script research archive preserves source bytes and original path literals for provenance; those scripts are not a portable production workflow. CPU/other GPU numerical parity, historical training reruns, multi-user coordination and external deployment are unverified. Dataset quality caveats and the distinct offline Evidence Engine v3 policy are documented in `ASSET_MANIFEST.md` and `research/STATUS.md`. See `RELEASE_CHECKLIST.md` and `PUBLICATION_REVIEW.md` before opening a pull request.
+This migration preserves the original local SAAD model set and research source bytes; their SHA-256 identities are recorded in the manifests. The fixed examples come from AI4Shipwrecks, GhostVision and SubPipeMini2 source domains, supplied externally. Dataset/model redistribution rights and independent code ownership have not been established, and this repository has no `LICENSE` file. Consult the original rights holders and source terms before reuse. See [Research](docs/RESEARCH.md) and [Limitations](docs/LIMITATIONS.md) for the precise boundaries.
