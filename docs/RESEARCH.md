@@ -62,13 +62,15 @@ This table records the post-merge audit of files and folders that looked obsolet
 | --- | --- | --- |
 | `backend/`, `web/src/`, `config/`, `.github/workflows/`, `tests/`, `audit/*.json` | KEEP | Production, CI and numerical contract. No inference, policy, API or frontend behavior change. |
 | `SOURCE_INVENTORY.md`, `ASSET_MANIFEST.md`, `BASELINE_VERIFICATION.md` | KEEP | Historical source/asset ledgers and original baseline; verification scripts and the model manifest reference their root paths. |
-| `research/original/`, `research/source_manifest.json`, verification scripts, `ml/` | KEEP / ARCHIVE | Preserve 31 original hashes and selected historical workflows; no research deletion. |
+| `research/original/`, `research/source_manifest.json` | ARCHIVE | Preserve 31 original hashes and source bytes; no research deletion. |
+| Research verification scripts and `ml/` | KEEP | Preserve supported checks, guarded dry runs and selected historical workflows. |
 | `backend/{vae_inference,realnvp_inference,tta_inference}.py` | KEEP | Compatibility imports, including original offline source references. |
 | `backend/test_realnvp.py` | ARCHIVE | Move byte-for-byte to `research/legacy/`; redundant model-loading smoke script. |
 | `ARCHITECTURE.md`, `docs/DEPLOYMENT.md`, `research/STATUS.md`, `ml/README.md`, `web/README.md` | CONSOLIDATE | Current facts moved into permanent architecture, setup and research docs. |
-| `STAGE1_VERIFICATION.md` through `STAGE6_VERIFICATION.md`, `REFACTOR_PLAN.md`, `MIGRATION_MAP.md` | CONSOLIDATE, then DELETE | Progress, pre-migration hypotheses and interim failures superseded by implemented architecture, evaluation, setup, research and limits; original versions remain in merged Git history. |
+| `STAGE1_VERIFICATION.md` through `STAGE6_VERIFICATION.md`, `REFACTOR_PLAN.md` | CONSOLIDATE, then DELETE | Progress, pre-migration hypotheses and interim failures superseded by implemented architecture, evaluation, setup, research and limits; original versions remain in merged Git history. |
+| `audit/MIGRATION_MAP.md` | ARCHIVE | Move the original file-by-file migration classification out of the main documentation path; its historical proposals are not current runtime instructions. |
 | `PUBLICATION_REVIEW.md`, `RELEASE_CHECKLIST.md`, `GITHUB_PUBLICATION_MANIFEST.md`, `docs/PR_BODY.md` | CONSOLIDATE, then DELETE | PR #1 preparation state is obsolete after merge; fresh-install result, local verification and publication limitations are retained in permanent docs. |
-| `.venv/`, `var/`, `web/node_modules/`, `web/dist/`, local `.env` files | EXCLUDE | Ignored local environments, storage and builds; do not delete a user's runtime state or add it to Git. |
+| `.venv/`, `var/`, `web/node_modules/`, `web/dist/`, local `.env` files | KEEP (ignored) | Ignored local environments, storage and builds; do not delete a user's runtime state or add it to Git. |
 | `datasets/.gitignore`, `ml/*/.gitignore` | KEEP | Empty mount/output sentinels and Git exclusions. |
 
 No source or dataset redistribution license is invented by this cleanup. The original external source, model, dataset and result directories are not edited.

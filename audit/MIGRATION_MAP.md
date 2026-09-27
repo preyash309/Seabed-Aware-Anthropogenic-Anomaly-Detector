@@ -1,6 +1,6 @@
 # Migration map
 
-This is the **pre-migration audit classification**. Stages 1–6 subsequently implemented the production and research layout; see `STAGE6_VERIFICATION.md` for the final state. Each original source/config/doc file below has one disposition. `ARCHIVE` means preserve the original research script and its input/output provenance in a versioned offline area; it does not mean delete the original. `EXTERNAL ASSET` means refer by validated path/hash, never commit binary data.
+This is the **pre-migration audit classification**. Stages 1–6 subsequently implemented the production and research layout; see [Architecture](../docs/ARCHITECTURE.md), [Evaluation](../docs/EVALUATION.md) and [Research](../docs/RESEARCH.md) for the implemented state. The original Stage 6 report remains in the merged Git history. Each original source/config/doc file below has one disposition. `ARCHIVE` means preserve the original research script and its input/output provenance in a versioned offline area; it does not mean delete the original. `EXTERNAL ASSET` means refer by validated path/hash, never commit binary data.
 
 | Original file | Disposition | Proposed clean-repo location / reason |
 | --- | --- | --- |
@@ -132,7 +132,7 @@ Dataset-side documentation and configuration have individual dispositions:
 
 | Asset group | Disposition | Handling |
 | --- | --- | --- |
-| Five live checkpoint/normalization tensors listed in [ASSET_MANIFEST.md](ASSET_MANIFEST.md) | EXTERNAL ASSET | Configure paths and verify SHA-256 before model load. |
+| Five live checkpoint/normalization tensors listed in [ASSET_MANIFEST.md](../ASSET_MANIFEST.md) | EXTERNAL ASSET | Configure paths and verify SHA-256 before model load. |
 | Alternate `last.pt`, VAE v2 SSIM, MAR, YOLO base/nano checkpoints | EXTERNAL ASSET | Preserve research provenance; do not substitute into runtime. |
 | Prepared/raw datasets, calibration tables, experiment outputs | EXTERNAL ASSET | Keep external; reference hashes, manifests and run metadata. |
 | `node_modules`, `.git`, `E:\SIH\new`, caches, uploads and generated binaries | EXCLUDE | Never migrate or commit. |
