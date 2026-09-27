@@ -1,16 +1,33 @@
 # Setup and local operation
 
-SAAD has been verified on one Windows RTX 4070 Laptop GPU machine for local loopback use. Use Python 3.11 and Node 24/npm 11. The observed parity stack includes Torch 2.11.0+cu128, torchvision 0.26.0+cu128, Ultralytics 8.4.140, FastAPI 0.141.1, NumPy 2.4.6, Pillow 12.3.0 and reportlab 5.0.1. `backend/requirements-original-windows-cu128.lock.txt` records the audited Windows environment before reportlab was added; `backend/requirements.txt` lists direct dependencies and is not the numerical-parity installation recipe. A fresh isolated wheel installation passed on the audited machine; a second machine has not been verified.
+Use this guide to install and operate the verified loopback application. For setting definitions see [Configuration](../config/README.md); for browser/API behavior see [Web](../web/README.md) and [Backend](../backend/README.md).
 
-## External inputs
+## Verified prerequisites
 
-Obtain the original five model/normalization tensors from an authorized copy of the SAAD results. The repository supplies no checkpoint or dataset download and grants no redistribution rights. Put the tensors outside Git in the relative layout of [the model manifest](../config/model_manifest.json). The manifest pins exact byte sizes and SHA-256 hashes; startup rejects missing or mismatched tensors. The committed `config/live_api_v1.json` is the live calibration and has a manifest-pinned hash. A Git attribute preserves its LF line endings on Windows so checkout conversion cannot change that raw hash. The original three sonar test images are external too; their hashes are in the fixtures under `audit/`.
+| Requirement | Audited value / boundary |
+| --- | --- |
+| Platform | Windows; one RTX 4070 Laptop GPU machine with 8 GB VRAM. |
+| Python | 3.11 (observed 3.11.0). |
+| PyTorch | Torch 2.11.0+cu128 and torchvision 0.26.0+cu128, official CUDA 12.8 wheels. |
+| Frontend tools | Node 24/npm 11 (observed 24.20.0/11.19.0). |
+| External inputs | Authorized copies of five frozen tensors; datasets are not required for ordinary inference. |
+| Verification inputs | Three original hashed image files, only for fixture evaluation. |
 
-From the repository root, copy `.env.example` to ignored `.env` and set `SAAD_ARTIFACT_DIR` to the external root. On the audited machine `E:/SIH/SIH_Results` is read-only. Optional `SAAD_YOLO_WEIGHTS`, `SAAD_VAE_WEIGHTS`, `SAAD_FLOW_WEIGHTS`, `SAAD_LATENT_MEAN`, `SAAD_LATENT_STD`, `SAAD_MODEL_MANIFEST` and `SAAD_CALIBRATION_FILE` select exact matching assets. `SAAD_DATASET_DIR` is an optional read-only prepared dataset. Relative paths resolve from the repository root. Upload, output and SQLite paths (`SAAD_UPLOAD_DIR`, `SAAD_OUTPUT_DIR`, `SAAD_DATABASE_PATH`) must remain inside the clean checkout and default to ignored `var/`. The `.env.example` also lists upload byte/pixel limits, API URL, CORS origins and device choice.
+Other observed dependencies include Ultralytics 8.4.140, FastAPI 0.141.1, NumPy 2.4.6, Pillow 12.3.0 and reportlab 5.0.1. [The Windows lock](../backend/requirements-original-windows-cu128.lock.txt) captures the audited environment before reportlab was added. [Direct requirements](../backend/requirements.txt) support hosted unit tests but are not the exact numerical-parity recipe.
+
+A fresh isolated wheel installation passed on this machine. Another machine/OS, CPU inference parity and another GPU remain unverified. GPU-driver installation is outside the tested setup commands.
+
+## Supply external assets
+
+Use the directory layout in [config/README.md](../config/README.md#asset-identities-and-placement). Obtain authorized original tensors from the SAAD owner/source holder; no public download is supplied. Do not commit copies. Startup checks exact byte sizes and SHA-256, not filenames alone.
+
+The repository supplies the live calibration, pinned by the manifest. Preserve its LF bytes using the existing Git attribute. Offline research calibration tables are separate external inputs.
+
+Copy root `.env.example` to ignored `.env` and edit `SAAD_ARTIFACT_DIR` to your external root. Individual tensor overrides are supported, but must match the same frozen identities. Runtime upload/output/database paths must resolve inside the clean checkout; default ignored `var/` holds local state. Relative runtime paths resolve from repository root.
 
 ## Windows installation
 
-In PowerShell at the repository root, create a **new** environment in the clean checkout. Do not use or modify an original project's environment.
+Run PowerShell from the repository root and create a **new** environment in this checkout. Never use or alter the original project's environment.
 
 ```powershell
 py -3.11 -m venv .venv
@@ -21,7 +38,9 @@ Copy-Item .env.example .env
 # Edit SAAD_ARTIFACT_DIR in .env to the authorized external asset root.
 ```
 
-If pip repeatedly transfers the large CUDA Torch wheel, stage that exact official wheel in ignored `var/wheels`, install it there first, then run the locked install. The publication audit used this path for its fresh installation:
+Expected dependency validation: `No broken requirements found.` No activation is required because commands name the environment's Python explicitly.
+
+If pip repeatedly transfers the large CUDA Torch wheel, stage that exact official wheel in ignored `var/wheels`, install it there first, then run the locked install. The fresh publication installation used this path:
 
 ```powershell
 New-Item -ItemType Directory -Path var\wheels -Force | Out-Null
@@ -32,11 +51,11 @@ New-Item -ItemType Directory -Path var\wheels -Force | Out-Null
 .\.venv\Scripts\python.exe -m pip check
 ```
 
-Do not substitute a different Torch build and claim golden parity.
+Do not substitute another Torch build and claim golden parity. Do not repeat environment creation over an existing installation as a repair step.
 
-## Start backend and browser
+## Preflight and backend launch
 
-In the backend PowerShell session at the repository root:
+From the root in the backend session:
 
 ```powershell
 New-Item -ItemType Directory -Path var\ultralytics -Force | Out-Null
@@ -46,9 +65,15 @@ $env:YOLO_CONFIG_DIR=(Resolve-Path var\ultralytics).Path
 .\.venv\Scripts\python.exe -B -m uvicorn main:app --app-dir backend --host 127.0.0.1 --port 8000
 ```
 
-Preflight checks all five tensors, live calibration and the three fixed external image hashes. For normal API startup without those three test images, omit the `verify_fixtures.py` command; startup still checks the five tensors and calibration. `SAAD_GOLDEN_IMAGE_DIR` can point the preflight and golden suite to an authorized mirror of the three fixed basenames.
+Fixture preflight checks five tensors, live calibration and three image hashes. For ordinary startup without test images, omit preflight; startup still validates model assets/calibration. `SAAD_GOLDEN_IMAGE_DIR` can select an authorized mirror of the three recorded image basenames.
 
-In a second PowerShell session:
+`SAAD_DEVICE=auto` selects CUDA 0 if available; explicitly set `cuda:0` before a parity run so CPU fallback cannot be mistaken for audited GPU execution. Keep `YOLO_AUTOINSTALL=False` and local `YOLO_CONFIG_DIR` set in each backend/test shell.
+
+After startup, `GET /api/ready` checks storage; `/api/health` and `/api/model` describe the loaded models. Interactive API docs are at `http://127.0.0.1:8000/docs`. Models are loaded before any route becomes available.
+
+## Browser launch and production preview
+
+From a second PowerShell session at the root:
 
 ```powershell
 cd web
@@ -56,10 +81,39 @@ npm ci
 npm run dev -- --host 127.0.0.1
 ```
 
-The frontend defaults to `http://127.0.0.1:8000` through `VITE_API_BASE_URL`. Copy `web/.env.example` to ignored `web/.env.local` to change it. Include the browser origin in `SAAD_CORS_ORIGINS` before API startup. The default allows the Vite development origin on port 5173. For a local production preview, run `npm run typecheck`, `npm run lint`, `npm run build`, then `npm run preview -- --host 127.0.0.1 --port 4173`; allow `http://127.0.0.1:4173` in CORS first. Rebuild after changing `VITE_API_BASE_URL`.
+Open the displayed Vite URL. Default API base is `http://127.0.0.1:8000`; default CORS allows localhost and 127.0.0.1 at port 5173. If Vite selects another port, configure that origin explicitly or free the intended port.
 
-`GET /api/ready` checks storage after model load; `POST /api/analyze` accepts image upload; scan/review/report routes are described in [Architecture](ARCHITECTURE.md). Runtime uploads, reports and `var/saad.sqlite3` are ignored by Git. Back up local state before replacing a machine. Keep both services on loopback: the API has no authentication or multi-user authorization.
+To change the browser API base, copy `web/.env.example` to ignored `web/.env.local`, set `VITE_API_BASE_URL`, and restart/rebuild the client. For production preview, allow `http://127.0.0.1:4173` in `SAAD_CORS_ORIGINS` before backend startup, then from `web/`:
 
-## Troubleshooting
+```powershell
+npm run typecheck
+npm run lint
+npm run build
+npm run preview -- --host 127.0.0.1 --port 4173
+```
 
-A missing or mismatched model fails startup before inference. Check the manifest path and hash; do not substitute a similarly named research checkpoint. Invalid uploads and storage failures return HTTP errors and remove attempted uploads. If the browser cannot connect, verify the loopback API, `VITE_API_BASE_URL` and CORS origins. Stop the model-loaded server before running the full GPU golden suite on the audited 8 GB device; concurrent execution caused CUDA/host-memory failures during migration. See [Evaluation](EVALUATION.md) for test commands and [Limitations](LIMITATIONS.md) for the verified boundary.
+This is local build verification, not a public deployment recipe.
+
+## First-use check
+
+Upload an authorized PNG/JPEG/WebP/TIFF image through New Scan. Confirm navigation to a saved scan, select a candidate, then save accept/reject or a corrected box. Refresh the direct scan page and inspect history/queue. Export the scan as JSON, CSV or PDF.
+
+An empty candidate list is a valid inference outcome, not a review failure. A partial scan means an anomaly or TTA signal failed; check backend logs before interpreting evidence. [Backend](../backend/README.md) defines responses and errors.
+
+## Tests, local state and troubleshooting
+
+[Tests](../tests/README.md) provides exact 13-test asset-free and 25-test full commands. Stop the API before full regression on the audited 8 GB device; concurrent model processes previously caused CUDA/host-memory failures.
+
+Uploads and `var/saad.sqlite3` are ignored runtime state. Preserve both when backing up; reports are generated from saved state on demand. There is no automatic deletion/retention or authenticated backup feature.
+
+| Symptom | Check |
+| --- | --- |
+| Startup missing/hash mismatch | Confirm external root, manifest-relative placement and exact source hashes; do not swap research weights. |
+| Calibration SHA mismatch | Check committed LF bytes and editor/Git line endings. |
+| Browser fetch/CORS failure | Verify API loopback address, build-time API base and actual browser origin. |
+| Upload 400/413 | Check supported suffix, decoded image validity and server byte/pixel limits. |
+| Readiness/storage 503 | Check local runtime paths, SQLite permissions and logs; preserve state before repair. |
+| Partial analysis | Inspect VAE/flow/TTA logs; HTTP success alone does not prove full inference. |
+| Native/CUDA test failure | Stop other model processes and record the failed run; it is not a parity result. |
+
+The API has no authentication. Keep both services bound to loopback; [Limitations](LIMITATIONS.md) defines the supported security and deployment boundary.

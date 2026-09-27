@@ -1,5 +1,20 @@
 # Evaluation and verification
 
+Use this guide to interpret measured results and regression gates. [Setup](SETUP.md) prepares the audited environment; [Tests](../tests/README.md) explains suite ownership; [CI](CI.md) defines the hosted boundary.
+
+## Verification at a glance
+
+| Evidence | Context | Meaning |
+| --- | --- | --- |
+| Original repeat runs | GhostVision, original direct calls, same audited GPU | Zero measured differences established repeatability for captured fields. |
+| API regression | GhostVision 640×640, 7 priority-sorted candidates | Preserves the original response's numerical and categorical outputs. |
+| Stage regression | AI4Shipwrecks 1728×2476: 14; GhostVision 640×640: 7; SubPipeMini2 2500×500: 6 | Preserves detector-order intermediate scores for three domain cases. |
+| Full backend suite | Windows RTX 4070 Laptop GPU, frozen assets, 25 methods | Checkpoint, configuration, numerical, orchestration and persisted API checks. |
+| Hosted backend slice | Ubuntu CPU imports, no private assets, 13 methods | Unit/configuration/safety boundaries; no numerical inference. |
+| Local browser | Real loopback API, external images, built client included | Upload, review/correction persistence, history, queue and attachments. |
+
+No verified detector accuracy or candidate-ranking metric is asserted. Precision/recall/mAP would require a defined labeled detection evaluation; ranking AUROC or review efficiency would require a separately specified candidate-level study. Numerical parity cannot substitute for either.
+
 SAAD's checked-in JSON fixtures are numerical **regression references**, not a detector accuracy benchmark. The fixed images and five model tensors are external. The [original direct-call baseline](../BASELINE_VERIFICATION.md) records two identical runs of a GhostVision image, full seven-candidate response fields, the three-domain stage capture, and same-environment tolerances. The original source and dataset audit ledgers remain in [SOURCE_INVENTORY.md](../SOURCE_INVENTORY.md) and [ASSET_MANIFEST.md](../ASSET_MANIFEST.md); the model manifest points to the baseline and asset ledger.
 
 ## Fixed-image method
@@ -48,3 +63,31 @@ These counts measure pipeline repeatability and application integration, not pre
 The documentation/legacy-file cleanup reran the same checks in the existing fresh `var/publication-venv` on the audited Windows RTX 4070 machine: `pip check` and 13/13 asset-independent tests passed; the full unchanged GPU suite passed 25/25 with every printed maximum golden delta 0.0. Frontend `npm ci`, type checking, lint and production build passed (1,858 transformed modules). All 31 archived source hashes, 37 ML/backend and 40 web original source sizes, and 202 asset-ledger rows / 197 unique external file hashes matched. Relative links in all 11 remaining Markdown files were checked without missing targets. Production source, manifest content and golden fixtures were unchanged; the old backend smoke script was moved byte-for-byte into `research/legacy/`.
 
 The first preflight failed because Windows Git `core.autocrlf` converted the committed calibration to CRLF, changing its raw hash. Restoring the exact committed LF bytes and adding a one-file `.gitattributes` rule restored the pinned SHA-256; no calibration value or manifest hash was changed. One subsequent full test process exited with Windows native code 0xC0000005 before reporting tests. Isolated CUDA allocation, model startup and the final full-suite rerun passed without a code or dependency change; that initial process failure was not a measured numerical mismatch. Browser interactions were not rerun for this documentation-only cleanup; the previous loopback browser evidence above remains the browser verification scope.
+
+## Exact tolerance scope
+
+The implemented comparisons in [test_stage1_golden.py](../tests/test_stage1_golden.py) use these absolute gates:
+
+| Field | API fixture | Detector-order stage fixtures |
+| --- | --- | --- |
+| Pixel box coordinates | ≤1 pixel | ≤1 pixel |
+| YOLO confidence | ≤1e-5 | ≤1e-5 |
+| VAE MSE | ≤1e-6 | ≤1e-6 |
+| RealNVP NLL | ≤1e-2 | ≤1e-2 |
+| TTA consistency | ≤1e-3 | ≤1e-3 |
+| Priority / uncertainty | ≤1e-3 | ≤1e-3 |
+| Normalized YOLO/VAE/flow | ≤1e-3 | Not separately asserted |
+| Base evidence | Not separately asserted | ≤1e-3 |
+| Counts, classes, positional ordering, profiles, priority levels, recommendations | Exact | Exact |
+
+The comparison is positional; a candidate's position is therefore part of the expected count/class/score contract. The test requires available scores and records maxima under `STAGE2_GOLDEN_MAX_ABSOLUTE_DELTAS`. Random scan IDs, timestamps and upload filenames are not numerical golden invariants.
+
+## Technical documentation verification (2026-09-27)
+
+This documentation-only update reused the previously fresh isolated `var/publication-venv`, rather than claiming another fresh install. Commands used its `Scripts/python.exe` from the repository root: `-m pip check`, `-B tests/run_ci_backend.py`, `-B research/verify_fixtures.py`, and `-B -X faulthandler -m unittest discover -s tests -p 'test_stage*.py' -q`. The GPU shell explicitly selected `SAAD_DEVICE=cuda:0`, disabled Ultralytics auto-install and confined its configuration/uploads/outputs to ignored clean-repository paths.
+
+Dependency validation passed; the asset-free slice passed 13/13 and the full GPU suite passed 25/25, without skips/failures. All printed golden maximum deltas were 0.0. The full run emitted a Starlette/httpx deprecation warning, not a test failure; no dependency or code was changed to suppress it.
+
+Frontend `npm ci`, typecheck, lint and build passed, with 1,858 transformed modules. All three documented builder dry runs completed without writing data. Archive hashes (31), original source-size records (37 ML/backend, 40 web) and the external asset ledger (202 rows / 197 unique files) matched. These checks read original inputs only; dataset images were not traversed in bulk.
+
+All 17 Markdown files were checked for relative-link targets and referenced heading anchors. The proposed diff contains Markdown only; application code, manifests, archive scripts, golden fixtures and tolerances remain unchanged. This update did not repeat browser interactions, PDF rendering, historical training or a second-machine installation.

@@ -1,5 +1,7 @@
 # Research sources and provenance
 
+Use this guide for historical workflow status and dataset interpretation. [Research tools](../research/README.md) covers provenance/preflight commands; [Offline ML](../ml/README.md) covers builder settings and dry runs. Production model architecture is documented separately in [Architecture](ARCHITECTURE.md).
+
 The production service imports only `backend/` modules. `research/original/` preserves **31 byte-identical Python scripts** from the original `E:/SIH/{Evidence,Experiment,VAE,YOLOv26}` folders. `research/source_manifest.json` records each source-relative path, archived path, byte size and SHA-256. `research/verify_provenance.py --original-root E:/SIH` checked all 31 against the read-only originals on the audited machine. Archived scripts can contain original absolute paths and may train models or overwrite outputs if run; they are provenance, not safe production entry points.
 
 The earlier GitHub `ml/` selection contains 22 original scripts: 19 are byte-identical to the archive and three dataset builders have clean-repository path and refusal guards. `ml/Dataset/safety.py` is the new helper. `ml/requirements.txt` lists direct offline dependencies but is not a verified lock for historical reruns. The complete external result/hash ledger and dataset integrity findings are in [ASSET_MANIFEST.md](../ASSET_MANIFEST.md). No checkpoint, dataset image, generated result or external calibration table is shipped.
@@ -74,3 +76,28 @@ This table records the post-merge audit of files and folders that looked obsolet
 | `datasets/.gitignore`, `ml/*/.gitignore` | KEEP | Empty mount/output sentinels and Git exclusions. |
 
 No source or dataset redistribution license is invented by this cleanup. The original external source, model, dataset and result directories are not edited.
+
+## External datasets and prepared splits
+
+The original inventory establishes source roots named AI4Shipwrecks, GhostVision_fixed, Marine_PULSE, SeabedObjects-Ship-and-Airplane-dataset-master, sss-crab-pot-detection-ds and SubPipeMini2. Presence is provenance evidence, not a licensing or evaluation endorsement. The prepared detector manifest uses AI4Shipwrecks, GhostVision, Marine-PULSE and SubPipeMini2 domain labels.
+
+Prepared detector data uses images/labels for train, val and test plus `manifest.csv`; prepared VAE data has split images and its own manifest. These directories remain external. The committed `datasets/` is only an ignored-data boundary; the runtime does not require a dataset checkout.
+
+| Prepared set | Split | Image files | Label files |
+| --- | --- | ---: | ---: |
+| SAAD_baseline | train | 6,571 | 6,616 |
+| SAAD_baseline | val | 1,097 | 1,097 |
+| SAAD_baseline | test | 544 | 544 |
+| SAAD_VAE | train | 11,475 | Not applicable to this count |
+| SAAD_VAE | val | 1,403 | Not applicable to this count |
+| SAAD_VAE | test | 1,408 | Not applicable to this count |
+
+These are audited file counts, not independently rebuilt splits. The detector manifest's Anthropogenic/Normal counts are separately recorded in [ASSET_MANIFEST.md](../ASSET_MANIFEST.md); manifest rows and image/label-file counts should not be conflated. Marine-PULSE contributes only 88 normal training rows in that record, with no validation/test rows.
+
+The integrity audit records 685 missing annotations, 45 surplus training label files and neighboring SubPipeMini2 frames across train/validation/test. Full dataset-image bytes were not recursively read or hashed. The three fixed images have independent recorded hashes and label patterns (AI4 empty, GhostVision two class-0 boxes, SubPipeMini2 one), supporting regression coverage rather than accuracy claims.
+
+Dataset builders preserve their historical preparation logic with output safeguards; they do not establish a clean new statistical evaluation protocol. Supply authorized data privately and inspect source terms before reuse. No official dataset URL, redistribution permission or unverified performance metric is inferred from the inventory.
+
+## Documentation after consolidation
+
+The cleanup disposition above records PR #2's historical decisions. The new directory READMEs under `ml/` and `web/` provide focused developer navigation; they do not restore the superseded progress documents or change research source bytes. The six permanent guides remain the detailed reference, with [the root README](../README.md) as the landing page.
