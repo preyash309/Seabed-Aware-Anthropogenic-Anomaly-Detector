@@ -1,5 +1,7 @@
 # GitHub Actions CI boundary
 
+This guide describes the checks in [ci.yml](../.github/workflows/ci.yml). For local execution and expected output see [Tests](../tests/README.md); for the GPU result see [Evaluation](EVALUATION.md).
+
 `.github/workflows/ci.yml` runs on pull requests to `main` and pushes to `main`. It has three independent jobs and read-only repository permissions. No GitHub secret, private image, dataset or frozen checkpoint is required or uploaded.
 
 | Job | Runner and command | Claim |
@@ -36,3 +38,13 @@ The already audited Windows RTX 4070 suite uses the official CUDA 12.8 wheel, au
 ```
 
 The full local suite previously passed 25/25 with zero maximum reported golden deltas on the audited machine. GitHub CI does not rerun, store or attest to that GPU result. Keep all external assets outside Git and Actions. The hosted CPU wheel is chosen for test imports; no CPU numerical parity has been established.
+
+## Running and extending the checks
+
+From a configured backend environment at the repository root, run `python -B tests/run_ci_backend.py` and `python -m pip check`. From `web/`, run `npm ci`, `npm run typecheck`, `npm run lint` and `npm run build`. Repository hygiene uses `python -B scripts/check_repository_hygiene.py`.
+
+A new asset-independent test must avoid importing model-loaded routes and opening private inputs. The selector has an explicit 13-test/no-skip guard; any future intentional expansion needs a reviewed selector/count update and corresponding documentation. Do not satisfy hosted CI by uploading weights, disabling golden checks or changing fixtures.
+
+Hosted direct Python dependencies are resolved during each run; the exact Windows CUDA lock is used for local parity instead. A hosted pass is not a fresh Windows/GPU installation attestation. The workflow has no browser automation, performance benchmark or public-deployment check.
+
+The hygiene scanner inspects tracked files and reachable history and tests Git exclusions. Its recognized signatures and explicit historical exception are a bounded safeguard, not proof that every secret or licensing issue has been detected.
